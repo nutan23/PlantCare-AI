@@ -12,3 +12,4 @@ gTTS
 groq
 gunicorn
 requests
+onnxruntime
