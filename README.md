@@ -36,6 +36,7 @@ PostgreSQL database integration
 
 Responsive interface for desktop and mobile
 
+
 🧠 AI Model
 
 The disease prediction system uses a TensorFlow/Keras model stored in:
