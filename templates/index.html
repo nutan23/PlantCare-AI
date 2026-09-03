@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        PlantCare
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌱 <span>Plant</span>Care
+    </div>
+
+
+    <div class="nav-links">
+
+        <a
+            href="#home"
+            class="active"
+        >
+
+            <i class="fa-solid fa-house"></i>
+
+            Home
+
+        </a>
+
+
+        <a href="{{ url_for('detect') }}">
+
+            <i class="fa-solid fa-camera"></i>
+
+            Detect Disease
+
+        </a>
+
+
+        <a
+            href="#"
+            onclick="openLoginAlert(event)"
+        >
+
+            <i class="fa-solid fa-seedling"></i>
+
+            Crop Management
+
+        </a>
+
+
+        <a href="#about">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            About
+
+        </a>
+
+
+        <a href="#contact">
+
+            <i class="fa-solid fa-envelope"></i>
+
+            Contact
+
+        </a>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('register') }}"
+        class="login-btn"
+    >
+
+        <i class="fa-solid fa-user"></i>
+
+        Login / Register
+
+    </a>
+
+</nav>
+
+
+
+<!-- ================= HERO ================= -->
+
+<section
+    class="hero"
+    id="home"
+>
+
+    <div class="hero-overlay"></div>
+
+
+    <div class="hero-content">
+
+        <p class="tagline">
+
+            Healthy Plants 🌿 Better Crops 🌎
+            Brighter Tomorrow
+
+        </p>
+
+
+        <h1>
+
+            Plant Disease &
+
+            <span>
+                Crop Management System
+            </span>
+
+        </h1>
+
+
+        <p class="hero-description">
+
+            Upload a leaf image, detect plant disease using AI,
+            get treatment suggestions and learn best farming
+            practices for healthier crops and a greener future.
+
+        </p>
+
+
+
+        <div class="hero-buttons">
+
+
+            <a
+                href="{{ url_for('detect') }}"
+                class="primary-btn"
+            >
+
+                <i class="fa-solid fa-camera"></i>
+
+                Detect Disease Now →
+
+            </a>
+
+
+            <a
+                href="#about"
+                class="secondary-btn"
+            >
+
+                📖 Learn More
+
+            </a>
+
+
+        </div>
+
+
+
+        <div class="stats">
+
+            <div>
+
+                🌿
+
+                <strong>
+                    1000+
+                </strong>
+
+                <span>
+                    Farming Tips
+                </span>
+
+            </div>
+
+
+            <div>
+
+                👨‍🌾
+
+                <strong>
+                    10+
+                </strong>
+
+                <span>
+                    Plant Categories
+                </span>
+
+            </div>
+
+
+            <div>
+
+                ❤️
+
+                <strong>
+                    AI
+                </strong>
+
+                <span>
+                    Disease Detection
+                </span>
+
+            </div>
+
+
+            <div>
+
+                🌱
+
+                <strong>
+                    Smart
+                </strong>
+
+                <span>
+                    Crop Planning
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= FEATURES ================= -->
+
+<section
+    class="features"
+    id="features"
+>
+
+    <h2>
+        🌿 Our Features
+    </h2>
+
+
+    <p class="section-description">
+
+        All the tools you need for healthier
+        and more productive farming.
+
+    </p>
+
+
+
+    <div class="feature-container">
+
+
+        <!-- DISEASE DETECTION -->
+
+        <div class="feature-card">
+
+
+            <div class="feature-icon">
+                📷
+            </div>
+
+
+            <h3>
+                Disease Detection
+            </h3>
+
+
+            <p>
+
+                Upload a leaf image and detect plant disease
+                using our CNN based AI model.
+
+            </p>
+
+
+            <div class="feature-bottom">
+
+                Fast • Accurate • Easy
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- TREATMENT -->
+
+        <div class="feature-card">
+
+
+            <div class="feature-icon">
+                🌱
+            </div>
+
+
+            <h3>
+                Treatment Suggestion
+            </h3>
+
+
+            <p>
+
+                Get organic and chemical treatment suggestions
+                for detected plant diseases.
+
+            </p>
+
+
+            <div class="feature-bottom">
+
+                Protect • Treat • Grow
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- PLANTING -->
+
+        <div class="feature-card">
+
+
+            <div class="feature-icon">
+                📖
+            </div>
+
+
+            <h3>
+                Planting Techniques
+            </h3>
+
+
+            <p>
+
+                Search crops and learn planting methods,
+                watering and farming techniques.
+
+            </p>
+
+
+            <div class="feature-bottom">
+
+                Learn • Apply • Grow
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- SCHEDULER -->
+
+        <div class="feature-card">
+
+
+            <div class="feature-icon">
+                📅
+            </div>
+
+
+            <h3>
+                Crop Scheduler
+            </h3>
+
+
+            <p>
+
+                Create personalized schedules for watering,
+                composting and crop maintenance.
+
+            </p>
+
+
+            <div class="feature-bottom">
+
+                Plan • Remind • Harvest
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= EXTRA FEATURES ================= -->
+
+<section class="smart-section">
+
+
+    <div class="smart-card">
+
+        🔔
+
+        <h3>
+            Smart Reminders
+        </h3>
+
+        <p>
+
+            Receive important crop-care and
+            farming reminders.
+
+        </p>
+
+    </div>
+
+
+    <div class="smart-card">
+
+        🎤
+
+        <h3>
+            Voice Assistance
+        </h3>
+
+        <p>
+
+            Search plant information using
+            voice commands.
+
+        </p>
+
+    </div>
+
+
+    <div class="smart-card">
+
+        🌐
+
+        <h3>
+            Multiple Languages
+        </h3>
+
+        <p>
+
+            Access planting guidance in
+            English, Marathi and Hindi.
+
+        </p>
+
+    </div>
+</section>
+
+
+
+<!-- ================= ABOUT ================= -->
+
+<section
+    class="about-section"
+    id="about"
+>
+
+    <div class="about-container">
+
+
+        <div class="about-heading">
+
+            <span>
+                🌱 Smart Agriculture Platform
+            </span>
+
+
+            <h2>
+                About PlantCare
+            </h2>
+
+
+            <p>
+
+                PlantCare is an AI-powered smart farming platform
+                designed to make plant health monitoring and crop
+                management simpler, faster and more accessible.
+
+            </p>
+
+        </div>
+
+
+
+        <div class="about-content-grid">
+
+
+            <div class="about-main-card">
+
+
+                <div class="about-icon">
+                    🌿
+                </div>
+
+
+                <h3>
+                    Smarter Farming in One Platform
+                </h3>
+
+
+                <p>
+
+                    PlantCare combines plant disease detection,
+                    crop scheduling, reminders, planting guidance,
+                    multilingual support and AI-based farmer
+                    assistance in one integrated web application.
+
+                </p>
+
+
+                <p>
+
+                    Farmers can detect plant diseases even without
+                    creating an account, while personalized features
+                    such as crop management, schedules and reminders
+                    are available after login.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="about-mini-grid">
+
+
+                <div class="about-mini-card">
+
+                    <span>
+                        🔬
+                    </span>
+
+                    <h4>
+                        AI Disease Detection
+                    </h4>
+
+                    <p>
+                        CNN-based leaf disease analysis.
+                    </p>
+
+                </div>
+
+
+                <div class="about-mini-card">
+
+                    <span>
+                        📅
+                    </span>
+
+                    <h4>
+                        Smart Scheduling
+                    </h4>
+
+                    <p>
+                        Personalized crop-care schedules.
+                    </p>
+
+                </div>
+
+
+                <div class="about-mini-card">
+
+                    <span>
+                        🤖
+                    </span>
+
+                    <h4>
+                        Farmer AI Assistant
+                    </h4>
+
+                    <p>
+                        AI support for farming questions.
+                    </p>
+
+                </div>
+
+
+                <div class="about-mini-card">
+
+                    <span>
+                        🌐
+                    </span>
+
+                    <h4>
+                        Multilingual Guidance
+                    </h4>
+
+                    <p>
+                        English, Marathi and Hindi support.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= CONTACT ================= -->
+
+<section
+    class="contact-section"
+    id="contact"
+>
+
+    <div class="contact-container">
+
+
+        <div class="contact-heading">
+
+            <span>
+                📩 PlantCare Support
+            </span>
+
+            <h2>
+                Contact Us
+            </h2>
+
+            <p>
+
+                Need help with PlantCare, disease detection
+                or crop-management features? Contact our
+                AgriTech support team.
+
+            </p>
+
+        </div>
+
+
+
+        <div class="contact-grid">
+
+
+            <div class="contact-card">
+
+                <div class="contact-icon">
+                    ✉️
+                </div>
+
+
+                <h3>
+                    Email Support
+                </h3>
+
+
+                <p>
+                    For technical or general support.
+                </p>
+
+
+                <a
+                    href="mailto:agritech.plantdisease@gmail.com"
+                    class="contact-email"
+                >
+
+                    agritech.plantdisease@gmail.com
+
+                </a>
+
+            </div>
+
+
+
+            <div class="contact-card">
+
+                <div class="contact-icon">
+                    🔬
+                </div>
+
+
+                <h3>
+                    Disease Detection Help
+                </h3>
+
+
+                <p>
+
+                    Get support related to plant image
+                    uploads and disease prediction.
+
+                </p>
+
+
+                <a
+                    href="mailto:agritech.plantdisease@gmail.com?subject=PlantCare Disease Detection Support"
+                    class="contact-action-btn"
+                >
+
+                    Contact Support
+
+                </a>
+
+            </div>
+
+
+
+            <div class="contact-card">
+
+                <div class="contact-icon">
+                    🌱
+                </div>
+
+
+                <h3>
+                    Crop Guidance
+                </h3>
+
+
+                <p>
+
+                    Ask for assistance regarding crop
+                    scheduling and planting features.
+
+                </p>
+
+
+                <a
+                    href="mailto:agritech.plantdisease@gmail.com?subject=PlantCare Crop Guidance"
+                    class="contact-action-btn"
+                >
+
+                    Send Email
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= LOGIN REQUIRED MODAL ================= -->
+
+<div
+    class="home-login-modal"
+    id="loginRequiredModal"
+>
+
+
+    <div class="home-login-modal-card">
+
+
+        <button
+            type="button"
+            class="home-modal-close"
+            onclick="closeLoginAlert()"
+        >
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+
+
+        <div class="home-modal-icon">
+            👨‍🌾
+        </div>
+
+
+        <h2>
+            Login Required
+        </h2>
+
+
+        <p>
+
+            Please login or create an account
+            to manage your crops, schedules,
+            reminders and farming history.
+
+        </p>
+
+
+
+        <div class="home-modal-actions">
+
+
+            <a
+                href="{{ url_for('login') }}"
+                class="home-modal-login-btn"
+            >
+
+                <i class="fa-solid fa-right-to-bracket"></i>
+
+                Login
+
+            </a>
+
+
+            <a
+                href="{{ url_for('register') }}"
+                class="home-modal-register-btn"
+            >
+
+                Create Account
+
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+
+    <div>
+
+        🌱 <strong>PlantCare</strong>
+
+        &nbsp; | &nbsp;
+
+        For a Healthier, Greener Tomorrow
+
+    </div>
+
+
+    <div>
+
+        Grow Plants • Grow Hope 🌿
+
+    </div>
+
+
+</footer>
+
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+
+// ==========================================
+// LOGIN REQUIRED MODAL
+// ==========================================
+
+function openLoginAlert(event) {
+
+    event.preventDefault();
+
+
+    const modal =
+        document.getElementById(
+            "loginRequiredModal"
+        );
+
+
+    if (modal) {
+
+        modal.classList.add(
+            "show-home-login-modal"
+        );
+
+    }
+
+}
+
+
+
+function closeLoginAlert() {
+
+
+    const modal =
+        document.getElementById(
+            "loginRequiredModal"
+        );
+
+
+    if (modal) {
+
+        modal.classList.remove(
+            "show-home-login-modal"
+        );
+
+    }
+
+}
+
+
+
+// ==========================================
+// CLOSE MODAL ON OUTSIDE CLICK
+// ==========================================
+
+window.addEventListener(
+    "click",
+    function(event) {
+
+        const modal =
+            document.getElementById(
+                "loginRequiredModal"
+            );
+
+
+        if (
+            modal
+            && event.target === modal
+        ) {
+
+            closeLoginAlert();
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// ESC KEY CLOSE
+// ==========================================
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Escape") {
+
+            closeLoginAlert();
+
+        }
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>

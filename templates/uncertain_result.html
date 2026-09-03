@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Uncertain Prediction - PlantCare</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<nav class="result-navbar">
+
+    <a href="{{ url_for('home') }}"
+       class="result-logo">
+        🌱 <span>Plant</span>Care
+    </a>
+
+    <div class="result-nav-links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('detect') }}">
+            Detect Disease
+        </a>
+
+        {% if session.get('user_id') %}
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('login') }}">
+                Login
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+<section class="prediction-result-page">
+
+    <div class="prediction-result-container">
+
+        <div class="result-page-heading">
+
+            <span class="result-small-title">
+                🌿 AI Plant Health Analysis
+            </span>
+
+            <h1>
+                Prediction Uncertain
+            </h1>
+
+            <p>
+                The system could not identify the disease with enough confidence.
+                Please try a clearer leaf image.
+            </p>
+
+        </div>
+
+
+        <div class="plant-status-card uncertain-result">
+
+            <div class="status-big-icon">
+                ⚠️
+            </div>
+
+            <div>
+
+                <span class="status-label">
+                    LOW CONFIDENCE
+                </span>
+
+                <h2>
+                    We Are Not Fully Certain
+                </h2>
+
+                <p>
+                    Current confidence is only
+                    <strong>{{ confidence }}%</strong>.
+                    For safety, no treatment recommendation is shown yet.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="uncertain-help-card">
+
+            <h2>
+                📸 Try Again With a Better Image
+            </h2>
+
+            <ul>
+                <li>Use a single leaf in the photo.</li>
+                <li>Keep the affected area clearly visible.</li>
+                <li>Use good natural lighting.</li>
+                <li>Avoid blurry or very distant images.</li>
+                <li>Use a simple background if possible.</li>
+            </ul>
+
+        </div>
+
+
+        <div class="possible-match-section">
+
+            <div class="treatment-heading">
+
+                <h2>
+                    🔍 Possible Matches
+                </h2>
+
+                <p>
+                    These are the top predictions from the AI model.
+                </p>
+
+            </div>
+
+
+            <div class="possible-match-grid">
+
+                {% for item in top_predictions %}
+
+                <div class="possible-match-card">
+
+                    <div class="possible-rank">
+                        {{ loop.index }}
+                    </div>
+
+                    <h3>
+                        {{ item.crop }}
+                    </h3>
+
+                    <p class="possible-disease">
+                        {{ item.disease }}
+                    </p>
+
+                    <div class="possible-confidence">
+                        {{ item.confidence }}%
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <div class="result-actions">
+
+            <a href="{{ url_for('detect') }}"
+               class="scan-again-btn">
+
+                <i class="fa-solid fa-camera"></i>
+                Try Another Image
+
+            </a>
+
+
+            {% if session.get('user_id') %}
+
+            <a href="{{ url_for('dashboard') }}"
+               class="result-dashboard-btn">
+
+                <i class="fa-solid fa-table-columns"></i>
+                Back to Dashboard
+
+            </a>
+
+            {% else %}
+
+            <a href="{{ url_for('home') }}"
+               class="result-dashboard-btn">
+
+                <i class="fa-solid fa-house"></i>
+                Back to Home
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="prediction-note">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            <p>
+                Treatment is intentionally not suggested for low-confidence
+                predictions to reduce the risk of incorrect recommendations.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Crop History - PlantCare</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="crop-history-page">
+
+
+    <div class="crop-history-container">
+
+
+        <div class="crop-history-header">
+
+
+            <div>
+
+                <span>
+                    🌾 Crop Tracking
+                </span>
+
+                <h1>
+                    {{ crop.crop_name }}
+                </h1>
+
+                <p>
+                    {{ crop.variety or "Variety not specified" }}
+                </p>
+
+            </div>
+
+
+            <a href="{{ url_for('manage_crops') }}"
+               class="history-back-btn">
+
+                ← Manage Crops
+
+            </a>
+
+
+        </div>
+
+
+
+        <div class="history-summary-grid">
+
+
+            <div class="history-summary-card">
+
+                <span>
+                    📅 Planting
+                </span>
+
+                <strong>
+                    {{ crop.planting_date }}
+                </strong>
+
+            </div>
+
+
+            <div class="history-summary-card">
+
+                <span>
+                    🌱 Stage
+                </span>
+
+                <strong>
+                    {{ crop.crop_stage or "Not specified" }}
+                </strong>
+
+            </div>
+
+
+            <div class="history-summary-card">
+
+                <span>
+                    🌾 Harvest
+                </span>
+
+                <strong>
+                    {{ crop.expected_harvest_date }}
+                </strong>
+
+            </div>
+
+
+            <div class="history-summary-card">
+
+                <span>
+                    🔔 Reminder
+                </span>
+
+                <strong>
+
+                    {% if crop.notify_me and crop.status == "Active" %}
+
+                        ON
+
+                    {% else %}
+
+                        OFF
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="history-section">
+
+
+            <h2>
+                Crop Activity Timeline
+            </h2>
+
+
+            {% if activities %}
+
+
+                <div class="activity-timeline">
+
+
+                    {% for activity in activities %}
+
+
+                        <div class="activity-history-card">
+
+
+                            <div class="activity-history-icon">
+
+                                {% if activity.activity_type == "Watering" %}
+
+                                    💧
+
+                                {% elif activity.activity_type == "Compost" %}
+
+                                    🌿
+
+                                {% elif activity.activity_type == "Fertilizer" %}
+
+                                    🧪
+
+                                {% elif activity.activity_type == "Inspection" %}
+
+                                    🔍
+
+                                {% else %}
+
+                                    🌾
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="activity-history-content">
+
+
+                                <div class="activity-history-top">
+
+
+                                    <h3>
+                                        {{ activity.activity_type }}
+                                    </h3>
+
+
+                                    {% if activity.status == "Completed" %}
+
+                                        <span class="activity-completed">
+                                            Completed
+                                        </span>
+
+                                    {% elif activity.due_date < today %}
+
+                                        <span class="activity-overdue">
+                                            Overdue
+                                        </span>
+
+                                    {% elif activity.due_date == today %}
+
+                                        <span class="activity-due">
+                                            Due Today
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="activity-pending">
+                                            Pending
+                                        </span>
+
+                                    {% endif %}
+
+
+                                </div>
+
+
+                                <p>
+
+                                    Due Date:
+
+                                    <strong>
+                                        {{ activity.due_date }}
+                                    </strong>
+
+                                </p>
+
+
+                                {% if activity.completed_date %}
+
+                                    <p>
+
+                                        Completed Date:
+
+                                        <strong>
+                                            {{ activity.completed_date }}
+                                        </strong>
+
+                                    </p>
+
+                                {% endif %}
+
+
+                                {% if (
+                                    activity.status != "Completed"
+                                    and crop.status == "Active"
+                                ) %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'mark_crop_activity_done',
+                                            activity_id=activity.id
+                                        ) }}"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="mark-done-btn"
+                                        >
+
+                                            ✓ Mark as Done
+
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+
+            {% else %}
+
+                <p>
+                    No activity records found.
+                </p>
+
+            {% endif %}
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

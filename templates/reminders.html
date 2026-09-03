@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Reminders - PlantCare</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+
+<div class="reminders-page">
+
+    <div class="reminders-container">
+
+
+        <div class="reminders-header">
+
+            <div>
+
+                <span>
+                    🔔 Crop Care
+                </span>
+
+                <h1>
+                    My Reminders
+                </h1>
+
+                <p>
+                    Track overdue, due-today and upcoming crop activities.
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('dashboard') }}"
+               class="history-back-btn">
+
+                ← Dashboard
+
+            </a>
+
+        </div>
+
+
+        <!-- OVERDUE -->
+
+        <section class="reminder-section">
+
+            <div class="reminder-section-title">
+
+                <h2>
+                    ⚠ Overdue
+                </h2>
+
+                <span>
+                    {{ overdue|length }}
+                </span>
+
+            </div>
+
+
+            {% if overdue %}
+
+                {% for activity in overdue %}
+
+                    <div class="reminder-item reminder-overdue">
+
+                        <div>
+
+                            <h3>
+                                {{ activity.activity_type }}
+                            </h3>
+
+                            <p>
+                                Due:
+                                {{ activity.due_date }}
+                            </p>
+
+                        </div>
+
+                        <a href="{{ url_for(
+                            'crop_history',
+                            crop_id=activity.schedule_id
+                        ) }}">
+
+                            View Crop
+
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="empty-reminder-text">
+                    No overdue activities.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- DUE TODAY -->
+
+        <section class="reminder-section">
+
+            <div class="reminder-section-title">
+
+                <h2>
+                    📅 Due Today
+                </h2>
+
+                <span>
+                    {{ due_today|length }}
+                </span>
+
+            </div>
+
+
+            {% if due_today %}
+
+                {% for activity in due_today %}
+
+                    <div class="reminder-item reminder-today">
+
+                        <div>
+
+                            <h3>
+                                {{ activity.activity_type }}
+                            </h3>
+
+                            <p>
+                                Due Today
+                            </p>
+
+                        </div>
+
+                        <a href="{{ url_for(
+                            'crop_history',
+                            crop_id=activity.schedule_id
+                        ) }}">
+
+                            Mark / View
+
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="empty-reminder-text">
+                    Nothing due today.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- UPCOMING -->
+
+        <section class="reminder-section">
+
+            <div class="reminder-section-title">
+
+                <h2>
+                    🌱 Upcoming
+                </h2>
+
+                <span>
+                    {{ upcoming|length }}
+                </span>
+
+            </div>
+
+
+            {% if upcoming %}
+
+                {% for activity in upcoming %}
+
+                    <div class="reminder-item reminder-upcoming">
+
+                        <div>
+
+                            <h3>
+                                {{ activity.activity_type }}
+                            </h3>
+
+                            <p>
+                                Due:
+                                {{ activity.due_date }}
+                            </p>
+
+                        </div>
+
+                        <a href="{{ url_for(
+                            'crop_history',
+                            crop_id=activity.schedule_id
+                        ) }}">
+
+                            View Crop
+
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="empty-reminder-text">
+                    No upcoming activities.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+SR No.,Test Type,Image Name,Actual Crop,Actual Disease,Predicted Crop,Predicted Disease,confidence,Result
+1,Dataset,01_Apple___Apple_scab.JPG,Apple,Apple Scab,Apple,Apple Scab,79.52%,correct
+2,Dataset,02_Apple___healthy.JPG,Apple,Healthy,Apple,Healthy,99.99%,correct
+3,Dataset,03_Corn_(maize)___Common_rust_.JPG,Corn (Maize),Common Rust,Corn (Maize),Common Rust,99.99%,correct
+4,Dataset,04_Corn_(maize)___Northern_Leaf_Blight.JPG,Corn (Maize),Northern Leaf Blight,Corn (Maize),Northern Leaf Blight,99.78%,correct
+5,Dataset,05_Grape___Black_rot.JPG,Grape,Black Rot,Grape,Black Rot,99.62%,correct
+6,Dataset,06_Grape___healthy.JPG,Grape,Healthy,Grape,Healthy,99.92%,correct
+7,Dataset,07_Peach___Bacterial_spot.JPG,Peach,Bacterial Spot,Peach,Bacterial Spot,100.00%,correct
+8,Dataset,08_Pepper_bell___Bacterial_spot.JPG,Pepper Bell,Bacterial Spot,Pepper Bell,Bacterial Spot,100.00%,correct
+9,Dataset,09_Potato___Early_blight.JPG,Potato,Early Blight,Potato,Early Blight,99.97%,correct
+10,Dataset,10_Potato___Late_blight.JPG,Potato,Late Blight,Potato,Late Blight,99.99%,correct
+11,Dataset,11_Strawberry___Leaf_scorch.JPG,Strawberry,Leaf Scorch,Strawberry,Leaf Scorch,99.98%,correct
+12,Dataset,12_Tomato___Bacterial_spot.JPG,Tomato,Bacterial Spot,Tomato,Bacterial Spot,95.32%,correct
+13,Dataset,13_Tomato___Early_blight.JPG,Tomato,Early Blight,Tomato,Early Blight,96.20%,correct
+14,Dataset,14_Tomato___Septoria_leaf_spot.JPG,Tomato,Septoria Leaf Spot,Tomato,Septoria Leaf Spot,98.93%,correct
+15,Dataset,15_Tomato___healthy.JPG,Tomato,Healthy,Tomato,Healthy,99.44%,correct
+16,External,p1.jpg,Tomato,Bacterial Spot,Tomato,uncertain,45.34%,wrong
+17,External,p2.jpeg,Tomato,Early Blight,Potato,Early Blight,68.00%,wrong
+18,External,p3.jpg,Tomato,Late Blight,Tomato,Late Blight,83.79%,correct
+19,External,p4.png,Tomato,Septoria Leaf Spot,Tomato,Early Blight,68.33%,wrong
+20,External,p5.jpeg,Tomato,Leaf Mold,Tomato,Leaf mold,60.99%,uncertain
+21,External,p6.jpeg,Pepper Bell,Bacterial Spot,apple,cedar apple rust,94.62%,wrong
+22,External,p7.jpg,Potato,Early Blight,Potato,Early Blight,64.36%,uncertain
+23,External,p8.jpg,Potato,Late Blight,Potato,Early Blight,49.44%,wrong
+24,External,p9.jpeg,Apple,Apple Scab,Apple,apple Scab,81.85%,correct
+25,External,p10.jpeg,Corn (Maize),Common Rust,Corn (Maize),Common Rust,98.77%,Correct
+26,External,p11.jpeg,Tomato,Late Blight,Tomato,Late Blight,32.08%,uncertain
+27,External,p12.jpeg,Tomato,Late Blight,Tomato,Late Blight,43.56%,uncertain
+28,External,p13.jpeg,Corn (Maize),Common Rust,Corn (Maize),Common Rust,94.47%,correct
+29,External,p14.jpeg,Apple,Apple Scab,Apple,Apple Scab,81.61%,correct
+30,External,p15.jpeg,Grape,Black Rot,Grape,Black Rot,49.82%,uncertain
+31,Uncertain,f1.jpeg,unknown,unknown,potato,Early Blight,46.93%,correct
+32,Uncertain,f2.jpeg,unknown,unknown,Soybean,Healthy,82.58%,wrong
+33,Uncertain,f3.jpeg,unknown,unknown,Apple,Healthy,49.46%,correct
+34,Uncertain,f4.jpeg,unknown,unknown,Soybean,Healthy,30.98%,correct
+35,Uncertain,f5.jpg,unknown,unknown,Apple,cedar apple rust,33.06%,correct

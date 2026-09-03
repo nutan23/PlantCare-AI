@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Disease History - PlantCare</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+<div class="disease-history-page">
+
+
+    <div class="disease-history-container">
+
+
+        <!-- ======================================
+             HEADER
+        ====================================== -->
+
+        <div class="disease-history-header">
+
+
+            <div>
+
+                <span class="disease-history-small">
+                    🍃 Plant Health Records
+                </span>
+
+                <h1>
+                    Disease History
+                </h1>
+
+                <p>
+                    View your previous plant scans,
+                    detected diseases and confidence scores.
+                </p>
+
+            </div>
+
+
+            <a href="{{ url_for('detect') }}"
+               class="new-scan-btn">
+
+                <i class="fa-solid fa-camera"></i>
+
+                New Scan
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- ======================================
+             SUMMARY
+        ====================================== -->
+
+        <div class="disease-history-stats">
+
+
+            <div class="disease-history-stat">
+
+                <div class="disease-stat-icon">
+                    📊
+                </div>
+
+                <div>
+
+                    <h2>
+                        {{ total_scans }}
+                    </h2>
+
+                    <p>
+                        Total Scans
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="disease-history-stat">
+
+                <div class="disease-stat-icon">
+                    ✅
+                </div>
+
+                <div>
+
+                    <h2>
+                        {{ healthy_scans }}
+                    </h2>
+
+                    <p>
+                        Healthy
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="disease-history-stat">
+
+                <div class="disease-stat-icon">
+                    🦠
+                </div>
+
+                <div>
+
+                    <h2>
+                        {{ diseased_scans }}
+                    </h2>
+
+                    <p>
+                        Disease Detected
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ======================================
+             SCAN HISTORY
+        ====================================== -->
+
+        {% if scans %}
+
+
+            <div class="disease-history-list">
+
+
+                {% for scan in scans %}
+
+
+                    <div class="disease-history-card">
+
+
+                        <div class="disease-history-card-top">
+
+
+                            <div class="history-crop-info">
+
+
+                                <div class="history-leaf-icon">
+
+                                    {% if scan.status == "Healthy" %}
+
+                                        🌿
+
+                                    {% else %}
+
+                                        🍂
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div>
+
+                                    <h2>
+                                        {{ scan.crop_name }}
+                                    </h2>
+
+                                    <p>
+                                        {{ scan.disease_name }}
+                                    </p>
+
+                                </div>
+
+
+                            </div>
+
+
+                            {% if scan.status == "Healthy" %}
+
+                                <span class="scan-status healthy">
+
+                                    Healthy
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="scan-status diseased">
+
+                                    Disease Detected
+
+                                </span>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+
+                        <div class="scan-detail-grid">
+
+
+                            <div class="scan-detail-item">
+
+                                <span>
+                                    🎯 Confidence
+                                </span>
+
+                                <strong>
+                                    {{ "%.2f"|format(scan.confidence) }}%
+                                </strong>
+
+                            </div>
+
+
+                            <div class="scan-detail-item">
+
+                                <span>
+                                    📷 Scan Source
+                                </span>
+
+                                <strong>
+                                    {{ scan.scan_source or "Unknown" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="scan-detail-item">
+
+                                <span>
+                                    📅 Date
+                                </span>
+
+                                <strong>
+
+                                    {{ scan.scanned_at.strftime(
+                                        "%d %b %Y"
+                                    ) }}
+
+                                </strong>
+
+                            </div>
+
+
+                            <div class="scan-detail-item">
+
+                                <span>
+                                    🕒 Time
+                                </span>
+
+                                <strong>
+
+                                    {{ scan.scanned_at.strftime(
+                                        "%I:%M %p"
+                                    ) }}
+
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                        {% if scan.status == "Disease Detected" %}
+
+                            <div class="disease-history-warning">
+
+                                ⚠ Disease detected during this scan.
+                                Follow the treatment and prevention
+                                guidance provided in the detection result.
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="disease-history-success">
+
+                                ✅ This plant was identified as healthy
+                                during the scan.
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="no-disease-history">
+
+
+                <div>
+                    🔬
+                </div>
+
+                <h2>
+                    No Disease Scans Yet
+                </h2>
+
+                <p>
+                    Your plant disease detection history
+                    will appear here after you scan a plant.
+                </p>
+
+
+                <a href="{{ url_for('detect') }}"
+                   class="new-scan-btn">
+
+                    Scan Your First Plant
+
+                </a>
+
+
+            </div>
+
+
+        {% endif %}
+
+
+
+        <div class="disease-history-back">
+
+            <a href="{{ url_for('dashboard') }}">
+
+                ← Back to Dashboard
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

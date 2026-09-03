@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - PlantCare</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+/* ==========================================
+   AI CHAT HISTORY CONTROLS
+========================================== */
+
+.chat-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-clear-btn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.16);
+    color: inherit;
+    transition: 0.2s ease;
+}
+
+.chat-clear-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+.chat-clear-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+
+    .chat-header-actions {
+        gap: 5px;
+    }
+
+    .chat-clear-btn {
+        width: 31px;
+        height: 31px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="dashboard-navbar">
+
+
+    <div class="dashboard-logo">
+
+        🌱 <span>Plant</span>Care
+
+    </div>
+
+
+    <div class="dashboard-nav-links">
+
+
+        <a href="{{ url_for('home') }}">
+
+            <i class="fa-solid fa-house"></i>
+
+            <span>Home</span>
+
+        </a>
+
+
+        <a href="{{ url_for('detect') }}">
+
+            <i class="fa-solid fa-camera"></i>
+
+            <span>Detect Disease</span>
+
+        </a>
+
+
+        <a href="{{ url_for('manage_crops') }}">
+
+            <i class="fa-solid fa-seedling"></i>
+
+            <span>Crops</span>
+
+        </a>
+
+
+        <a href="{{ url_for('crop_scheduler') }}">
+
+            <i class="fa-solid fa-calendar-days"></i>
+
+            <span>Scheduler</span>
+
+        </a>
+
+
+        <a href="{{ url_for('planting_techniques') }}">
+
+            <i class="fa-solid fa-book-open"></i>
+
+            <span>Planting Guide</span>
+
+        </a>
+
+
+    </div>
+
+
+    <div class="dashboard-user">
+
+
+
+        <a href="{{ url_for('profile') }}"
+           class="profile-name-link">
+
+            👨‍🌾 {{ user_name }}
+
+        </a>
+
+
+        <a href="{{ url_for('logout') }}"
+           class="logout-btn">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            Logout
+
+        </a>
+
+
+    </div>
+
+
+</nav>
+
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="dashboard-hero">
+
+
+    <div class="dashboard-hero-content">
+
+
+        <p class="small-title">
+
+            🌿 Smart Farming Dashboard
+
+        </p>
+
+
+        <h1>
+
+            Welcome, {{ user_name }}!
+
+        </h1>
+
+
+        <p>
+
+            Detect plant diseases, manage crops,
+            create personalized farming schedules
+            and get smart farming assistance.
+
+        </p>
+
+
+        <div class="dashboard-hero-actions">
+
+
+            <a href="{{ url_for('detect') }}"
+               class="dashboard-main-btn">
+
+                <i class="fa-solid fa-camera"></i>
+
+                Check Plant Health
+
+            </a>
+
+
+            <a href="{{ url_for('crop_scheduler') }}"
+              class="dashboard-secondary-btn">
+
+                <i class="fa-solid fa-calendar-days"></i>
+
+                Create Crop Schedule
+
+          </a>
+
+                <i class="fa-solid fa-calendar-days"></i>
+
+                Create Crop Schedule
+
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     QUICK STATS
+===================================================== -->
+
+<section class="dashboard-stats">
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            🌾
+        </div>
+
+        <div>
+
+            <h3>{{ active_crops }}</h3>
+
+            <p>
+                Active Crops
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            📅
+        </div>
+
+        <div>
+
+            <h3>{{ upcoming_activities }}</h3>
+
+            <p>
+                Upcoming Activities
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            🍃
+        </div>
+
+        <div>
+
+            <h3>{{ disease_scans }}</h3>
+
+            <p>
+                Disease Scans
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-icon">
+            🔔
+        </div>
+
+        <div>
+
+            <h3>{{ active_reminders }}</h3>
+
+            <p>
+                Active Reminders
+            </p>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     SMART FARMING TOOLS
+===================================================== -->
+
+<section class="dashboard-content">
+
+
+    <div class="section-heading">
+
+
+        <h2>
+
+            🌱 Smart Farming Tools
+
+        </h2>
+
+
+        <p>
+
+            Everything you need to protect,
+            manage and grow your crops.
+
+        </p>
+
+
+    </div>
+
+
+
+    <div class="final-dashboard-grid">
+
+
+        <!-- =================================================
+             1. DISEASE DETECTION
+        ================================================= -->
+
+        <div class="final-feature-card">
+
+
+            <div class="final-feature-top">
+
+
+                <div class="dashboard-feature-icon">
+                    🔬
+                </div>
+
+
+                <span class="feature-badge">
+
+                    AI Powered
+
+                </span>
+
+
+            </div>
+
+
+            <h3>
+
+                Disease Detection
+
+            </h3>
+
+
+            <p>
+
+                Upload or capture a leaf image and
+                identify plant diseases using our
+                trained AI model.
+
+            </p>
+
+
+            <div class="mini-feature-list">
+
+                <span>✓ Camera & upload</span>
+
+                <span>✓ Disease prediction</span>
+
+                <span>✓ Confidence score</span>
+
+                <span>✓ Treatment & prevention</span>
+
+            </div>
+
+
+            <a href="{{ url_for('detect') }}"
+               class="clean-feature-btn">
+
+                Detect Disease
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             2. CROP MANAGEMENT
+        ================================================= -->
+
+        <div class="final-feature-card"
+             id="crop-management">
+
+
+            <div class="final-feature-top">
+
+
+                <div class="dashboard-feature-icon">
+                    🌾
+                </div>
+
+
+                <span class="feature-badge">
+
+                    My Farm
+
+                </span>
+
+
+            </div>
+
+
+            <h3>
+
+                Crop Management
+
+            </h3>
+
+
+            <p>
+
+                Save your crops and track their
+                complete progress from planting
+                to harvesting.
+
+            </p>
+
+
+            <div class="mini-feature-list">
+
+                <span>✓ Crop details</span>
+
+                <span>✓ Growth tracking</span>
+
+                <span>✓ Current crop status</span>
+
+                <span>✓ Crop history</span>
+
+            </div>
+
+
+            <a href="{{ url_for('manage_crops') }}"
+               class="clean-feature-btn">
+
+                Manage Crops
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             3. CROP SCHEDULER
+        ================================================= -->
+
+        <div class="final-feature-card"
+             id="crop-scheduler">
+
+
+            <div class="final-feature-top">
+
+
+                <div class="dashboard-feature-icon">
+                    📅
+                </div>
+
+
+                <span class="feature-badge">
+
+                    Smart Schedule
+
+                </span>
+
+
+            </div>
+
+
+            <h3>
+
+                Crop Scheduler
+
+            </h3>
+
+
+            <p>
+
+                Enter crop details and generate
+                a personalized farming schedule.
+
+            </p>
+
+
+            <div class="mini-feature-list">
+
+                <span>✓ Watering dates</span>
+
+                <span>✓ Compost schedule</span>
+
+                <span>✓ Fertilizer guidance</span>
+
+                <span>✓ Harvest estimate</span>
+
+            </div>
+
+
+            <div class="scheduler-note">
+
+                🔔 Enable <strong>Notify Me</strong>
+                to receive SMS reminders.
+
+            </div>
+
+
+            <a href="{{ url_for('crop_scheduler') }}"
+               class="clean-feature-btn">
+
+                Create Schedule
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             4. REMINDERS
+        ================================================= -->
+
+        <div class="final-feature-card">
+
+
+            <div class="final-feature-top">
+
+
+                <div class="dashboard-feature-icon">
+                    🔔
+                </div>
+
+
+                <span class="feature-badge">
+
+                    Notifications
+
+                </span>
+
+
+            </div>
+
+
+            <h3>
+
+                Reminders
+
+            </h3>
+
+
+            <p>
+
+                View all upcoming crop-care reminders
+                generated from your schedules.
+
+            </p>
+
+
+            <div class="mini-feature-list">
+
+                <span>✓ Watering reminders</span>
+
+                <span>✓ Fertilizer alerts</span>
+
+                <span>✓ Compost reminders</span>
+
+                <span>✓ Harvest reminders</span>
+
+            </div>
+
+
+            <a href="{{ url_for('reminders') }}"
+               class="clean-feature-btn">
+
+                View Reminders
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             5. DISEASE HISTORY
+        ================================================= -->
+
+        <div class="final-feature-card">
+
+
+            <div class="final-feature-top">
+
+
+                <div class="dashboard-feature-icon">
+                    📊
+                </div>
+
+
+                <span class="feature-badge">
+
+                    Records
+
+                </span>
+
+
+            </div>
+
+
+            <h3>
+
+                Disease History
+
+            </h3>
+
+
+            <p>
+
+                View your previous disease scans
+                and past plant health results.
+
+            </p>
+
+
+            <div class="mini-feature-list">
+
+                <span>✓ Previous scans</span>
+
+                <span>✓ Disease results</span>
+
+                <span>✓ Confidence history</span>
+
+                <span>✓ Treatment records</span>
+
+            </div>
+
+
+            <a href="{{ url_for('disease_history') }}"
+               class="clean-feature-btn">
+
+                View History
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             6. PLANTING TECHNIQUES
+        ================================================= -->
+
+        <div class="final-feature-card"
+             id="planting-techniques">
+
+
+            <div class="final-feature-top">
+
+
+                <div class="dashboard-feature-icon">
+                    📖
+                </div>
+
+
+                <span class="feature-badge">
+
+                    Knowledge Hub
+
+                </span>
+
+
+            </div>
+
+
+            <h3>
+
+                Planting Techniques
+
+            </h3>
+
+
+            <p>
+
+                Search crops and learn correct
+                planting and crop-care techniques.
+
+            </p>
+
+
+            <div class="mini-feature-list">
+
+                <span>✓ Soil preparation</span>
+
+                <span>✓ Planting method</span>
+
+                <span>✓ Watering guidance</span>
+
+                <span>✓ Harvest techniques</span>
+
+            </div>
+
+
+            <div class="planting-card-actions">
+
+
+                <a href="{{ url_for('planting_techniques') }}"
+                   class="clean-feature-btn">
+
+                    Explore Techniques
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+
+                <button
+                    type="button"
+                    class="voice-search-btn">
+
+                    <i class="fa-solid fa-microphone"></i>
+
+                    Voice Search
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     LANGUAGE SUPPORT
+===================================================== -->
+
+<section class="language-support-section">
+
+
+    <div class="language-support-content">
+
+
+        <div class="language-support-icon">
+
+            🌍
+
+        </div>
+
+
+        <div>
+
+
+            <h2>
+
+                Farming Support in Your Language
+
+            </h2>
+
+
+            <p>
+
+                Crop guidance, schedules, planting
+                techniques and AI assistance can be
+                displayed in your preferred language.
+
+            </p>
+
+
+        </div>
+
+
+        <div class="language-tags">
+
+
+            <span>
+                मराठी
+            </span>
+
+
+            <span>
+                हिंदी
+            </span>
+
+
+            <span>
+                English
+            </span>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     MOTIVATIONAL SECTION
+===================================================== -->
+
+<section class="farmer-message">
+
+
+    <div>
+
+
+        <h2>
+
+            🌱 Healthy Crops Start With Smart Care
+
+        </h2>
+
+
+        <p>
+
+            Track your crop regularly and take
+            the right action at the right time.
+
+        </p>
+
+
+    </div>
+
+
+    <div class="farmer-message-emoji">
+
+        🌾 👨‍🌾 🌿
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="dashboard-footer">
+
+
+    <div>
+
+        🌱 <strong>PlantCare</strong>
+
+        | Smart Farming for a Greener Tomorrow
+
+    </div>
+
+
+    <div>
+
+        Grow • Protect • Harvest 🌾
+
+    </div>
+
+
+</footer>
+
+
+
+<!-- =====================================================
+     FLOATING AI FARMER ASSISTANT
+===================================================== -->
+
+<button
+    class="ai-chat-floating-btn"
+    id="openChatBtn"
+    type="button"
+    onclick="toggleFarmerChat()">
+
+    🤖
+
+</button>
+
+
+
+<div
+    class="farmer-chat-window"
+    id="farmerChatWindow">
+
+
+    <!-- HEADER -->
+
+    <div class="farmer-chat-header">
+
+
+        <div class="chatbot-title">
+
+
+            <div class="chatbot-avatar">
+
+                🤖
+
+            </div>
+
+
+            <div>
+
+                <h3>
+
+                    PlantCare AI
+
+                </h3>
+
+
+                <span>
+
+                    <i class="fa-solid fa-circle"></i>
+
+                    Farmer Assistant
+
+                </span>
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="chat-header-actions">
+
+            <button
+                type="button"
+                class="chat-clear-btn"
+                id="clearFarmerChatBtn"
+                onclick="clearFarmerChatHistory()"
+                title="Clear Chat History">
+
+                <i class="fa-solid fa-trash"></i>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="chat-close-btn"
+                onclick="toggleFarmerChat()">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- LANGUAGE -->
+
+    <div class="chat-language">
+
+
+        <label for="chatLanguage">
+
+            🌍 Language:
+
+        </label>
+
+
+        <select id="chatLanguage">
+
+
+            <option value="en">
+
+                English
+
+            </option>
+
+
+            <option value="mr">
+
+                मराठी
+
+            </option>
+
+
+            <option value="hi">
+
+                हिंदी
+
+            </option>
+
+
+        </select>
+
+
+    </div>
+
+
+
+    <!-- CHAT -->
+
+    <div
+        class="farmer-chat-messages"
+        id="chatMessages">
+
+
+        <div class="bot-message">
+
+
+            <div class="small-bot-avatar">
+
+                🤖
+
+            </div>
+
+
+            <div class="message-bubble">
+
+                Hello {{ user_name }}! 👋
+
+                <br><br>
+
+                I'm your PlantCare Farmer Assistant.
+
+                <br>
+
+                Ask me about crops, diseases,
+                watering, fertilizer or planting.
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- QUICK QUESTIONS -->
+
+        <div class="chat-suggestions">
+
+
+            <button
+                type="button"
+                onclick="selectQuestion(
+                    'How often should I water tomato plants?'
+                )">
+
+                💧 Watering
+
+            </button>
+
+
+            <button
+                type="button"
+                onclick="selectQuestion(
+                    'How can I protect my crop from disease?'
+                )">
+
+                🍃 Disease
+
+            </button>
+
+
+            <button
+                type="button"
+                onclick="selectQuestion(
+                    'Which fertilizer should I use?'
+                )">
+
+                🌱 Fertilizer
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- INPUT -->
+
+    <div class="farmer-chat-input">
+
+
+        <button
+            class="chat-mic-btn"
+            type="button"
+            title="Voice Search">
+
+            <i class="fa-solid fa-microphone"></i>
+
+        </button>
+
+
+        <input
+            type="text"
+            id="farmerQuestion"
+            placeholder="Ask about your crop..."
+            autocomplete="off">
+
+
+        <button
+            class="chat-send-btn"
+            type="button"
+            onclick="sendFarmerQuestion()">
+
+            <i class="fa-solid fa-paper-plane"></i>
+
+        </button>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     CHATBOT JAVASCRIPT
+===================================================== -->
+
+<script>
+
+// =====================================================
+// PLANTCARE AI FARMER CHATBOT
+// =====================================================
+
+let farmerChatBusy = false;
+let chatRecognition = null;
+
+function toggleFarmerChat() {
+    const chat = document.getElementById("farmerChatWindow");
+    if (!chat) return;
+    chat.classList.toggle("show-farmer-chat");
+    const input = document.getElementById("farmerQuestion");
+    if (chat.classList.contains("show-farmer-chat") && input) {
+        setTimeout(() => input.focus(), 150);
+    }
+}
+
+function selectQuestion(question) {
+    const input = document.getElementById("farmerQuestion");
+    if (!input) return;
+    input.value = question;
+    input.focus();
+}
+
+function addUserMessage(message) {
+    const messages = document.getElementById("chatMessages");
+    if (!messages) return;
+    const userMessage = document.createElement("div");
+    userMessage.className = "user-chat-message";
+    userMessage.textContent = message;
+    messages.appendChild(userMessage);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function addBotMessage(message) {
+    const messages = document.getElementById("chatMessages");
+    if (!messages) return;
+    const botMessage = document.createElement("div");
+    botMessage.className = "bot-message";
+
+    const avatar = document.createElement("div");
+    avatar.className = "small-bot-avatar";
+    avatar.textContent = "🤖";
+
+    const bubble = document.createElement("div");
+    bubble.className = "message-bubble";
+    bubble.style.whiteSpace = "pre-wrap";
+    bubble.textContent = message;
+
+    botMessage.appendChild(avatar);
+    botMessage.appendChild(bubble);
+    messages.appendChild(botMessage);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function addLoadingMessage() {
+    const messages = document.getElementById("chatMessages");
+    if (!messages) return null;
+    const loading = document.createElement("div");
+    loading.className = "bot-message";
+    loading.id = "farmerChatLoading";
+    loading.innerHTML = `
+        <div class="small-bot-avatar">🤖</div>
+        <div class="message-bubble">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            PlantCare AI is thinking...
+        </div>
+    `;
+    messages.appendChild(loading);
+    messages.scrollTop = messages.scrollHeight;
+    return loading;
+}
+
+async function sendFarmerQuestion() {
+    const input = document.getElementById("farmerQuestion");
+    const languageSelect = document.getElementById("chatLanguage");
+    if (!input) return;
+
+    const question = input.value.trim();
+    if (question === "" || farmerChatBusy) return;
+
+    const language = languageSelect ? languageSelect.value : "en";
+    addUserMessage(question);
+    input.value = "";
+    farmerChatBusy = true;
+    const loading = addLoadingMessage();
+
+    try {
+        const response = await fetch("/api/farmer-chat", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({question, language})
+        });
+
+        const data = await response.json();
+        if (loading) loading.remove();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "AI response failed.");
+        }
+
+        addBotMessage(data.answer);
+    } catch (error) {
+        if (loading && loading.isConnected) loading.remove();
+        console.error("FARMER CHAT ERROR:", error);
+        addBotMessage("PlantCare AI is temporarily unavailable. Please try again.");
+    } finally {
+        farmerChatBusy = false;
+        input.focus();
+    }
+}
+
+function startFarmerVoiceSearch() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert("Voice input is not supported in this browser.");
+        return;
+    }
+
+    if (chatRecognition) {
+        try { chatRecognition.stop(); } catch (error) {}
+        chatRecognition = null;
+    }
+
+    const languageSelect = document.getElementById("chatLanguage");
+    const selectedLanguage = languageSelect ? languageSelect.value : "en";
+    const languageMap = {en: "en-IN", mr: "mr-IN", hi: "hi-IN"};
+
+    chatRecognition = new SpeechRecognition();
+    chatRecognition.lang = languageMap[selectedLanguage] || "en-IN";
+    chatRecognition.interimResults = false;
+    chatRecognition.maxAlternatives = 1;
+
+    const micButton = document.querySelector(".chat-mic-btn");
+    if (micButton) {
+        micButton.innerHTML = '<i class="fa-solid fa-microphone-lines"></i>';
+        micButton.classList.add("listening");
+    }
+
+    chatRecognition.onresult = function(event) {
+        const spokenText = event.results[0][0].transcript;
+        const input = document.getElementById("farmerQuestion");
+        if (input) {
+            input.value = spokenText;
+            input.focus();
+        }
+    };
+
+    chatRecognition.onerror = function(event) {
+        console.error("VOICE INPUT ERROR:", event.error);
+    };
+
+    chatRecognition.onend = function() {
+        if (micButton) {
+            micButton.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+            micButton.classList.remove("listening");
+        }
+        chatRecognition = null;
+    };
+
+    chatRecognition.start();
+}
+
+
+// =====================================================
+// LOAD CHAT HISTORY FROM POSTGRESQL
+// =====================================================
+
+async function loadFarmerChatHistory() {
+
+    const messages =
+        document.getElementById(
+            "chatMessages"
+        );
+
+    if (!messages) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/farmer-chat/history",
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            || !data.success
+        ) {
+
+            throw new Error(
+                data.message
+                || "Could not load chat history."
+            );
+        }
+
+
+        if (
+            !Array.isArray(
+                data.history
+            )
+            || data.history.length === 0
+        ) {
+
+            return;
+        }
+
+
+        // Remove old restored messages if this
+        // function is ever called more than once.
+        messages
+            .querySelectorAll(
+                ".saved-chat-message"
+            )
+            .forEach(
+                function(item) {
+                    item.remove();
+                }
+            );
+
+
+        data.history.forEach(
+            function(chat) {
+
+                if (chat.question) {
+
+                    const userMessage =
+                        document.createElement(
+                            "div"
+                        );
+
+                    userMessage.className =
+                        "user-chat-message saved-chat-message";
+
+                    userMessage.textContent =
+                        chat.question;
+
+                    messages.appendChild(
+                        userMessage
+                    );
+                }
+
+
+                if (chat.answer) {
+
+                    const botMessage =
+                        document.createElement(
+                            "div"
+                        );
+
+                    botMessage.className =
+                        "bot-message saved-chat-message";
+
+
+                    const avatar =
+                        document.createElement(
+                            "div"
+                        );
+
+                    avatar.className =
+                        "small-bot-avatar";
+
+                    avatar.textContent =
+                        "🤖";
+
+
+                    const bubble =
+                        document.createElement(
+                            "div"
+                        );
+
+                    bubble.className =
+                        "message-bubble";
+
+                    bubble.style.whiteSpace =
+                        "pre-wrap";
+
+                    bubble.textContent =
+                        chat.answer;
+
+
+                    botMessage.appendChild(
+                        avatar
+                    );
+
+                    botMessage.appendChild(
+                        bubble
+                    );
+
+                    messages.appendChild(
+                        botMessage
+                    );
+                }
+            }
+        );
+
+
+        messages.scrollTop =
+            messages.scrollHeight;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "LOAD CHAT HISTORY ERROR:",
+            error
+        );
+    }
+}
+
+
+// =====================================================
+// CLEAR CHAT HISTORY FROM POSTGRESQL
+// =====================================================
+
+async function clearFarmerChatHistory() {
+
+    if (farmerChatBusy) {
+        return;
+    }
+
+
+    const confirmed =
+        window.confirm(
+            "Do you want to clear all your PlantCare AI chat history?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    const clearButton =
+        document.getElementById(
+            "clearFarmerChatBtn"
+        );
+
+
+    if (clearButton) {
+        clearButton.disabled = true;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/farmer-chat/history",
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            || !data.success
+        ) {
+
+            throw new Error(
+                data.message
+                || "Could not clear chat history."
+            );
+        }
+
+
+        const messages =
+            document.getElementById(
+                "chatMessages"
+            );
+
+
+        if (messages) {
+
+            messages.innerHTML = `
+
+                <div class="bot-message">
+
+                    <div class="small-bot-avatar">
+                        🤖
+                    </div>
+
+                    <div class="message-bubble">
+                        Chat history cleared. Ask me a new farming question.
+                    </div>
+
+                </div>
+
+            `;
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "CLEAR CHAT HISTORY ERROR:",
+            error
+        );
+
+
+        alert(
+            error.message
+            || "Could not clear chat history."
+        );
+    }
+
+    finally {
+
+        if (clearButton) {
+            clearButton.disabled = false;
+        }
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    loadFarmerChatHistory();
+
+    const input = document.getElementById("farmerQuestion");
+    const micButton = document.querySelector(".chat-mic-btn");
+
+    if (input) {
+        input.addEventListener("keydown", function(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendFarmerQuestion();
+            }
+        });
+    }
+
+    if (micButton) {
+        micButton.addEventListener("click", startFarmerVoiceSearch);
+    }
+});
+
+</script>
+
+
+</body>
+
+</html>

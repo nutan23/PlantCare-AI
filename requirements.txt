@@ -1,0 +1,14 @@
+Flask
+Flask-SQLAlchemy
+Flask-Bcrypt
+Flask-Mail
+python-dotenv
+psycopg2-binary
+SQLAlchemy
+tensorflow
+numpy
+Pillow
+APScheduler
+gTTS
+groq
+gunicorn

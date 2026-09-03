@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Crop Scheduler - PlantCare</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+
+<div class="crop-form-page">
+
+    <div class="crop-form-card">
+
+
+        <div class="crop-form-heading">
+
+            <span>
+                📅 Smart Crop Scheduler
+            </span>
+
+            <h1>
+                Create Crop Schedule
+            </h1>
+
+            <p>
+                Enter crop details and recent farming activities
+                to generate a personalized crop-care schedule.
+            </p>
+
+        </div>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <form
+            method="POST"
+            action="{{ url_for('crop_scheduler') }}"
+            class="crop-form"
+        >
+
+
+            <!-- ======================================
+                 BASIC CROP DETAILS
+            ====================================== -->
+
+            <div class="crop-section-title">
+                🌱 Crop Details
+            </div>
+
+
+            <div class="crop-form-row">
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Crop Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        name="crop_name"
+                        placeholder="e.g. Tomato"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Variety
+                    </label>
+
+                    <input
+                        type="text"
+                        name="variety"
+                        placeholder="e.g. Cherry Tomato"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="crop-form-row">
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Planting Date *
+                    </label>
+
+                    <input
+                        type="date"
+                        name="planting_date"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Farm / Plot Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="farm_name"
+                        placeholder="e.g. North Field"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="crop-form-row">
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Area
+                    </label>
+
+                    <input
+                        type="text"
+                        name="area"
+                        placeholder="e.g. 2 acres"
+                    >
+
+                </div>
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Soil Type
+                    </label>
+
+                    <select name="soil_type">
+
+                        <option value="">
+                            Select Soil Type
+                        </option>
+
+                        <option value="Black Soil">
+                            Black Soil
+                        </option>
+
+                        <option value="Red Soil">
+                            Red Soil
+                        </option>
+
+                        <option value="Loamy Soil">
+                            Loamy Soil
+                        </option>
+
+                        <option value="Sandy Soil">
+                            Sandy Soil
+                        </option>
+
+                        <option value="Clay Soil">
+                            Clay Soil
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="crop-form-row">
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Irrigation Type
+                    </label>
+
+                    <select name="irrigation_type">
+
+                        <option value="">
+                            Select Irrigation
+                        </option>
+
+                        <option value="Drip">
+                            Drip Irrigation
+                        </option>
+
+                        <option value="Sprinkler">
+                            Sprinkler
+                        </option>
+
+                        <option value="Flood">
+                            Flood Irrigation
+                        </option>
+
+                        <option value="Manual">
+                            Manual Watering
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Current Crop Stage
+                    </label>
+
+                    <select name="crop_stage">
+
+                        <option value="">
+                            Select Stage
+                        </option>
+
+                        <option value="Seedling">
+                            Seedling
+                        </option>
+
+                        <option value="Vegetative">
+                            Vegetative Growth
+                        </option>
+
+                        <option value="Flowering">
+                            Flowering
+                        </option>
+
+                        <option value="Fruiting">
+                            Fruiting
+                        </option>
+
+                        <option value="Maturity">
+                            Maturity
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ======================================
+                 RECENT ACTIVITIES
+            ====================================== -->
+
+            <div class="crop-section-title">
+                🗓️ Recent Crop Activities
+            </div>
+
+
+            <div class="crop-form-row">
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Last Watering Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="last_watering_date"
+                    >
+
+                </div>
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Last Compost Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="last_compost_date"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="crop-form-row">
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Last Fertilizer Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="last_fertilizer_date"
+                    >
+
+                </div>
+
+
+                <div class="crop-field">
+
+                    <label>
+                        Last Crop Inspection Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="last_inspection_date"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ======================================
+                 NOTIFICATIONS
+            ====================================== -->
+
+            <div class="crop-section-title">
+                🔔 Email Reminder
+            </div>
+
+
+            <div class="crop-notify-box">
+
+
+                <input
+                    type="checkbox"
+                    id="notify_me"
+                    name="notify_me"
+                    value="yes"
+                >
+
+
+                <label for="notify_me">
+
+                    <strong>
+                        Notify Me
+                    </strong>
+
+                    <span>
+                        Send crop-care reminders to my registered
+                        email address.
+                    </span>
+
+                </label>
+
+
+            </div>
+
+
+
+            <!-- ======================================
+                 NOTES
+            ====================================== -->
+
+            <div class="crop-field">
+
+                <label>
+                    Notes
+                </label>
+
+                <textarea
+                    name="notes"
+                    rows="4"
+                    placeholder="Any additional information about this crop..."
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- ======================================
+                 ACTION BUTTONS
+            ====================================== -->
+
+            <div class="crop-form-actions">
+
+
+                <a href="{{ url_for('dashboard') }}"
+                   class="crop-cancel-btn">
+
+                    ← Back to Dashboard
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="crop-save-btn"
+                >
+
+                    📅 Generate Schedule
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

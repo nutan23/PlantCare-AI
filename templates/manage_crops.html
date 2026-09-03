@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Crop Management - PlantCare</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+
+<div class="manage-crops-page">
+
+    <div class="manage-crops-container">
+
+
+        <div class="manage-crops-header">
+
+            <div>
+
+                <span class="manage-small-title">
+                    🌾 My Farm
+                </span>
+
+                <h1>
+                    Crop Management
+                </h1>
+
+                <p>
+                    Track your crops, activities,
+                    reminders and history.
+                </p>
+
+            </div>
+
+
+            <a href="{{ url_for('crop_scheduler') }}"
+               class="manage-add-btn">
+
+                <i class="fa-solid fa-plus"></i>
+
+                New Crop Schedule
+
+            </a>
+
+        </div>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        {% if not crops %}
+
+
+            <div class="no-crops-card">
+
+                <div class="no-crops-icon">
+                    🌱
+                </div>
+
+                <h2>
+                    No crops found
+                </h2>
+
+                <p>
+                    Create your first crop schedule
+                    to begin crop tracking.
+                </p>
+
+                <a href="{{ url_for('crop_scheduler') }}"
+                   class="manage-add-btn">
+
+                    Create Schedule
+
+                </a>
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="manage-crops-grid">
+
+
+                {% for crop in crops %}
+
+
+                    <div class="manage-crop-card">
+
+
+                        <div class="manage-crop-top">
+
+
+                            <div class="crop-main-info">
+
+                                <div class="manage-crop-icon">
+                                    🌱
+                                </div>
+
+                                <div>
+
+                                    <h2>
+                                        {{ crop.crop_name }}
+                                    </h2>
+
+                                    <p>
+                                        {{ crop.variety or "Variety not specified" }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <span class="crop-status
+                                {% if crop.status == 'Active' %}
+                                    active
+                                {% else %}
+                                    archived
+                                {% endif %}
+                            ">
+
+                                {{ crop.status }}
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div class="crop-detail-grid">
+
+
+                            <div class="crop-detail-item">
+
+                                <span>
+                                    📅 Planting Date
+                                </span>
+
+                                <strong>
+                                    {{ crop.planting_date }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="crop-detail-item">
+
+                                <span>
+                                    🌱 Current Stage
+                                </span>
+
+                                <strong>
+                                    {{ crop.crop_stage or "Not specified" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="crop-detail-item">
+
+                                <span>
+                                    📍 Farm / Plot
+                                </span>
+
+                                <strong>
+                                    {{ crop.farm_name or "Not specified" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="crop-detail-item">
+
+                                <span>
+                                    🌍 Soil Type
+                                </span>
+
+                                <strong>
+                                    {{ crop.soil_type or "Not specified" }}
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="crop-next-section">
+
+                            <h3>
+                                Current Schedule
+                            </h3>
+
+
+                            <div class="next-activity-row">
+
+                                <span>
+                                    💧 Watering
+                                </span>
+
+                                <strong>
+                                    {{ crop.next_watering_date }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="next-activity-row">
+
+                                <span>
+                                    🌿 Compost
+                                </span>
+
+                                <strong>
+                                    {{ crop.next_compost_date }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="next-activity-row">
+
+                                <span>
+                                    🧪 Fertilizer
+                                </span>
+
+                                <strong>
+                                    {{ crop.next_fertilizer_date }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="next-activity-row">
+
+                                <span>
+                                    🔍 Inspection
+                                </span>
+
+                                <strong>
+                                    {{ crop.next_inspection_date }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="next-activity-row harvest-row">
+
+                                <span>
+                                    🌾 Harvest
+                                </span>
+
+                                <strong>
+                                    {{ crop.expected_harvest_date }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="crop-reminder-status">
+
+                            {% if crop.notify_me and crop.status == "Active" %}
+
+                                <span class="reminder-on">
+                                    🔔 Email Reminders ON
+                                </span>
+
+                            {% else %}
+
+                                <span class="reminder-off">
+                                    🔕 Email Reminders OFF
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="manage-crop-actions">
+
+
+                            <a
+                                href="{{ url_for(
+                                    'crop_history',
+                                    crop_id=crop.id
+                                ) }}"
+                                class="crop-view-btn"
+                            >
+
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                                View History
+
+                            </a>
+
+
+                            {% if crop.status == "Active" %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'archive_crop',
+                                        crop_id=crop.id
+                                    ) }}"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="crop-archive-btn"
+                                    >
+
+                                        <i class="fa-solid fa-box-archive"></i>
+
+                                        Archive
+
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% endif %}
+
+
+        <div class="manage-back-area">
+
+            <a href="{{ url_for('dashboard') }}">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

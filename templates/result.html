@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Disease Result - PlantCare</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="result-navbar">
+
+    <a href="{{ url_for('home') }}"
+       class="result-logo">
+
+        🌱 <span>Plant</span>Care
+
+    </a>
+
+
+    <div class="result-nav-links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('detect') }}">
+            Detect Disease
+        </a>
+
+        {% if session.get('user_id') %}
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('login') }}">
+                Login
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+
+<!-- ================= RESULT PAGE ================= -->
+
+<section class="prediction-result-page">
+
+
+    <div class="prediction-result-container">
+
+
+        <!-- TITLE -->
+
+        <div class="result-page-heading">
+
+            <span class="result-small-title">
+                🌿 AI Plant Health Analysis
+            </span>
+
+            <h1>
+                Disease Detection Result
+            </h1>
+
+            <p>
+                Your leaf image has been analyzed using
+                our trained CNN-based plant disease model.
+            </p>
+
+        </div>
+
+
+
+        <!-- ================= HEALTH STATUS ================= -->
+
+        {% if is_healthy %}
+
+        <div class="plant-status-card healthy-result">
+
+            <div class="status-big-icon">
+                ✅
+            </div>
+
+            <div>
+
+                <span class="status-label">
+                    PLANT STATUS
+                </span>
+
+                <h2>
+                    Your Plant Looks Healthy!
+                </h2>
+
+                <p>
+                    No disease was detected in the submitted
+                    leaf image.
+                </p>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="plant-status-card disease-result">
+
+            <div class="status-big-icon">
+                ⚠️
+            </div>
+
+            <div>
+
+                <span class="status-label">
+                    PLANT STATUS
+                </span>
+
+                <h2>
+                    Disease Detected
+                </h2>
+
+                <p>
+                    The AI model detected signs of a plant
+                    disease in the submitted image.
+                </p>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- ================= DETAILS ================= -->
+
+        <div class="prediction-info-grid">
+
+
+            <div class="prediction-info-card">
+
+                <div class="prediction-info-icon">
+                    🌱
+                </div>
+
+                <span>
+                    Crop / Plant
+                </span>
+
+                <h3>
+                    {{ crop_name }}
+                </h3>
+
+            </div>
+
+
+
+            <div class="prediction-info-card">
+
+                <div class="prediction-info-icon">
+                    🦠
+                </div>
+
+                <span>
+                    Disease
+                </span>
+
+                <h3>
+                    {{ disease_name }}
+                </h3>
+
+            </div>
+
+
+
+            <div class="prediction-info-card">
+
+                <div class="prediction-info-icon">
+                    🎯
+                </div>
+
+                <span>
+                    Model Confidence
+                </span>
+
+                <h3>
+                    {{ confidence }}%
+                </h3>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ================= CONFIDENCE ================= -->
+
+        <div class="confidence-section">
+
+            <div class="confidence-heading">
+
+                <span>
+                    AI Confidence
+                </span>
+
+                <strong>
+                    {{ confidence }}%
+                </strong>
+
+            </div>
+
+
+            <div class="confidence-track">
+
+                <div
+                    class="confidence-fill"
+                    data-confidence="{{ confidence }}">
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= SYMPTOMS ================= -->
+
+        <div class="confidence-section">
+
+            <div class="confidence-heading">
+
+                <span>
+                    🔍 Symptoms / Observation
+                </span>
+
+            </div>
+
+            <p>
+                {{ symptoms }}
+            </p>
+
+        </div>
+
+
+
+        <!-- ================= HEALTHY ADVICE ================= -->
+
+        {% if is_healthy %}
+
+        <div class="treatment-section">
+
+            <div class="treatment-heading">
+
+                <h2>
+                    🌿 Keep Your Plant Healthy
+                </h2>
+
+                <p>
+                    Continue following good crop care practices.
+                </p>
+
+            </div>
+
+
+            <div class="treatment-grid">
+
+
+                <div class="treatment-card">
+
+                    <div class="treatment-icon">
+                        💧
+                    </div>
+
+                    <h3>
+                        Proper Watering
+                    </h3>
+
+                    <p>
+                        Maintain appropriate watering based
+                        on your crop and soil conditions.
+                    </p>
+
+                </div>
+
+
+                <div class="treatment-card">
+
+                    <div class="treatment-icon">
+                        ☀️
+                    </div>
+
+                    <h3>
+                        Good Sunlight
+                    </h3>
+
+                    <p>
+                        Provide suitable sunlight and proper
+                        spacing for healthy plant growth.
+                    </p>
+
+                </div>
+
+
+                <div class="treatment-card">
+
+                    <div class="treatment-icon">
+                        🔍
+                    </div>
+
+                    <h3>
+                        Regular Monitoring
+                    </h3>
+
+                    <p>
+                        {{ prevention }}
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= DISEASE TREATMENT ================= -->
+
+        {% else %}
+
+        <div class="treatment-section">
+
+
+            <div class="treatment-heading">
+
+                <h2>
+                    🌿 Recommended Care
+                </h2>
+
+                <p>
+                    Recommendations for
+                    <strong>{{ disease_name }}</strong>
+                </p>
+
+            </div>
+
+
+            <div class="treatment-grid">
+
+
+                <!-- ORGANIC -->
+
+                <div class="treatment-card">
+
+                    <div class="treatment-icon">
+                        ♻️
+                    </div>
+
+                    <h3>
+                        Organic Treatment
+                    </h3>
+
+                    <p>
+                        {{ organic_treatment }}
+                    </p>
+
+                </div>
+
+
+
+                <!-- GENERAL / CHEMICAL -->
+
+                <div class="treatment-card">
+
+                    <div class="treatment-icon">
+                        🧪
+                    </div>
+
+                    <h3>
+                        Treatment
+                    </h3>
+
+                    <p>
+                        {{ treatment }}
+                    </p>
+
+                </div>
+
+
+
+                <!-- PREVENTION -->
+
+                <div class="treatment-card">
+
+                    <div class="treatment-icon">
+                        🛡️
+                    </div>
+
+                    <h3>
+                        Prevention
+                    </h3>
+
+                    <p>
+                        {{ prevention }}
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- ================= ACTION BUTTONS ================= -->
+
+        <div class="result-actions">
+
+            <a href="{{ url_for('detect') }}"
+               class="scan-again-btn">
+
+                <i class="fa-solid fa-camera"></i>
+
+                Scan Another Leaf
+
+            </a>
+
+
+            {% if session.get('user_id') %}
+
+            <a href="{{ url_for('dashboard') }}"
+               class="result-dashboard-btn">
+
+                <i class="fa-solid fa-table-columns"></i>
+
+                Back to Dashboard
+
+            </a>
+
+            {% else %}
+
+            <a href="{{ url_for('login') }}"
+               class="result-dashboard-btn">
+
+                <i class="fa-solid fa-right-to-bracket"></i>
+
+                Login for More Features
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- ================= DISCLAIMER ================= -->
+
+        <div class="prediction-note">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            <p>
+                AI predictions may not always be correct.
+                Treatment suggestions are general guidance only.
+                Consider expert agricultural advice before
+                making important crop-treatment decisions.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= CONFIDENCE BAR SCRIPT ================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const confidenceBar =
+                document.querySelector(".confidence-fill");
+
+            if (confidenceBar) {
+
+                const confidence =
+                    confidenceBar.dataset.confidence;
+
+                confidenceBar.style.width =
+                    confidence + "%";
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Planting Techniques - PlantCare
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="planting-page">
+
+    <div class="planting-container">
+
+
+        <!-- ======================================
+             HEADER
+        ====================================== -->
+
+        <div class="planting-header">
+
+
+            <div>
+
+                <span>
+                    🌱 AI Farming Knowledge Hub
+                </span>
+
+                <h1>
+                    Planting Techniques
+                </h1>
+
+                <p>
+                    Choose your language and search
+                    any plant for a complete growing guide.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="planting-back-btn"
+            >
+
+                ← Dashboard
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- ======================================
+             SEARCH + LANGUAGE
+        ====================================== -->
+
+        <form
+            method="GET"
+            action="{{ url_for('planting_techniques') }}"
+            class="planting-search-box planting-ai-search"
+            id="plantSearchForm"
+        >
+
+
+            <div class="plant-language-select">
+
+                <i class="fa-solid fa-language"></i>
+
+                <select
+                    name="language"
+                    id="guideLanguage"
+                >
+
+                    {% for code, language in languages.items() %}
+
+                        <option
+                            value="{{ code }}"
+
+                            {% if selected_language == code %}
+                                selected
+                            {% endif %}
+                        >
+
+                            {{ language.name }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+
+            <div class="planting-search-field">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    name="crop"
+                    id="cropSearch"
+                    value="{{ selected_crop }}"
+                    placeholder="Search Banana, Mango, Tulsi, Rose..."
+                    autocomplete="off"
+                    required
+                >
+
+            </div>
+
+
+
+            <button
+                type="submit"
+                class="planting-search-btn"
+            >
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                Search
+
+            </button>
+
+
+
+            <button
+                type="button"
+                class="planting-voice-btn"
+                onclick="startCropVoiceSearch()"
+            >
+
+                <i class="fa-solid fa-microphone"></i>
+
+                Voice Search
+
+            </button>
+
+
+        </form>
+
+
+
+        <!-- ======================================
+             SELECTED LANGUAGE
+        ====================================== -->
+
+        <div class="selected-language-note">
+
+            <i class="fa-solid fa-language"></i>
+
+            Guide Language:
+
+            <strong>
+
+                {{ languages[selected_language].name }}
+
+            </strong>
+
+        </div>
+
+
+
+        <!-- ======================================
+             POPULAR PLANTS
+        ====================================== -->
+
+        <div class="plant-library-heading">
+
+            <span>
+                🌿 Quick Access
+            </span>
+
+            <h2>
+                Popular Plants
+            </h2>
+
+            <p>
+                Click any plant to generate or open
+                its planting guide.
+            </p>
+
+        </div>
+
+
+
+        <div class="plant-library-grid">
+
+
+            {% for plant in popular_plants %}
+
+
+                <a
+                    href="{{ url_for(
+                        'planting_techniques',
+                        crop=plant.name,
+                        language=selected_language
+                    ) }}#plantingGuide"
+
+                    class="plant-library-card"
+                >
+
+
+                    <div class="plant-library-icon">
+
+                        {{ plant.icon }}
+
+                    </div>
+
+
+                    <h3>
+                        {{ plant.name }}
+                    </h3>
+
+
+                    <p>
+                        Complete growing guide
+                    </p>
+
+
+                    <span>
+                        Open Guide →
+                    </span>
+
+
+                </a>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+
+        <!-- ======================================
+             ERROR
+        ====================================== -->
+
+        {% if error_message %}
+
+
+            <div
+                class="plant-ai-error"
+                id="plantingGuide"
+            >
+
+                <div class="plant-error-icon">
+                    🌱
+                </div>
+
+                <h2>
+                    Guide Unavailable
+                </h2>
+
+                <p>
+                    {{ error_message }}
+                </p>
+
+            </div>
+
+
+        {% endif %}
+
+
+
+        <!-- ======================================
+             PLANT GUIDE
+        ====================================== -->
+
+        {% if selected_technique %}
+
+
+            <section
+                class="planting-guide-card"
+                id="plantingGuide"
+            >
+
+
+                <!-- ==================================
+                     GUIDE HEADER
+                ================================== -->
+
+                <div class="planting-guide-top">
+
+
+                    <div>
+
+                        <span>
+                            🌿 Complete Growing Guide
+                        </span>
+
+
+                        <h2>
+                            {{ selected_technique.name }}
+                        </h2>
+
+
+                        <div class="plant-guide-meta">
+
+
+                            {% if selected_technique.category %}
+
+                                <span>
+                                    {{ selected_technique.category }}
+                                </span>
+
+                            {% endif %}
+
+
+                            <span>
+
+                                🌐
+                                {{ languages[selected_language].name }}
+
+                            </span>
+
+
+                            {% if guide_source == "Database" %}
+
+                                <span>
+                                    ⚡ Saved Guide
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    🤖 AI Generated
+                                </span>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <button
+                        type="button"
+                        class="guide-speak-btn"
+                        id="guideSpeakButton"
+                        onclick="togglePlantingVoice()"
+                    >
+
+                        <i class="fa-solid fa-volume-high"></i>
+
+                        Listen Guide
+
+                    </button>
+
+
+                </div>
+
+
+
+                <!-- ==================================
+                     QUICK INFORMATION
+                ================================== -->
+
+                <div class="planting-guide-grid">
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="season"
+                    >
+
+                        <span>
+                            ☀️ Season
+                        </span>
+
+                        <p>
+                            {{ selected_technique.season or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="climate"
+                    >
+
+                        <span>
+                            🌤️ Climate
+                        </span>
+
+                        <p>
+                            {{ selected_technique.climate or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="soil"
+                    >
+
+                        <span>
+                            🌍 Soil
+                        </span>
+
+                        <p>
+                            {{ selected_technique.soil or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="soil_ph"
+                    >
+
+                        <span>
+                            🧪 Soil pH
+                        </span>
+
+                        <p>
+                            {{ selected_technique.soil_ph or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="spacing"
+                    >
+
+                        <span>
+                            📏 Spacing
+                        </span>
+
+                        <p>
+                            {{ selected_technique.spacing or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="planting_depth"
+                    >
+
+                        <span>
+                            🌱 Planting Depth
+                        </span>
+
+                        <p>
+                            {{ selected_technique.planting_depth or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="sunlight"
+                    >
+
+                        <span>
+                            ☀️ Sunlight
+                        </span>
+
+                        <p>
+                            {{ selected_technique.sunlight or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="watering"
+                    >
+
+                        <span>
+                            💧 Watering
+                        </span>
+
+                        <p>
+                            {{ selected_technique.watering or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="fertilizer"
+                    >
+
+                        <span>
+                            🧪 Fertilizer
+                        </span>
+
+                        <p>
+                            {{ selected_technique.fertilizer or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="care"
+                    >
+
+                        <span>
+                            🛡️ Crop Care
+                        </span>
+
+                        <p>
+                            {{ selected_technique.care or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="duration"
+                    >
+
+                        <span>
+                            ⏳ Duration
+                        </span>
+
+                        <p>
+                            {{ selected_technique.duration or "—" }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="planting-info-card"
+                        data-key="harvest"
+                    >
+
+                        <span>
+                            🌾 Harvest
+                        </span>
+
+                        <p>
+                            {{ selected_technique.harvest or "—" }}
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ==================================
+                     STEP-BY-STEP GUIDE
+                ================================== -->
+
+                <div class="planting-steps-section">
+
+
+                    <div class="planting-steps-heading">
+
+                        <span>
+                            🌱 Step-by-Step Process
+                        </span>
+
+
+                        <h2>
+
+                            {% if selected_language == "mr" %}
+
+                                {{ selected_technique.name }}
+                                लागवडीची पद्धत
+
+                            {% elif selected_language == "hi" %}
+
+                                {{ selected_technique.name }}
+                                उगाने की प्रक्रिया
+
+                            {% else %}
+
+                                How to Grow
+                                {{ selected_technique.name }}
+
+                            {% endif %}
+
+                        </h2>
+
+
+                        <p>
+
+                            {% if selected_language == "mr" %}
+
+                                तयारीपासून काढणीपर्यंतची
+                                संपूर्ण प्रक्रिया.
+
+                            {% elif selected_language == "hi" %}
+
+                                तैयारी से कटाई तक की
+                                पूरी प्रक्रिया.
+
+                            {% else %}
+
+                                Complete process from preparation
+                                to harvesting.
+
+                            {% endif %}
+
+                        </p>
+
+
+                    </div>
+
+
+
+                    <div class="planting-step-list">
+
+
+                        {% for step in selected_technique.steps %}
+
+
+                            <div class="planting-step-card">
+
+
+                                <div class="planting-step-number">
+
+                                    {{ loop.index }}
+
+                                </div>
+
+
+                                <div class="planting-step-content">
+
+                                    <h3>
+                                        {{ step.title }}
+                                    </h3>
+
+                                    <p>
+                                        {{ step.description }}
+                                    </p>
+
+                                </div>
+
+
+                            </div>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ==================================
+                     COMMON PROBLEMS
+                ================================== -->
+
+                {% if selected_technique.common_problems %}
+
+
+                    <div class="common-problems-section">
+
+
+                        <h2>
+
+                            {% if selected_language == "mr" %}
+
+                                ⚠️ लक्ष ठेवण्यासारख्या समस्या
+
+                            {% elif selected_language == "hi" %}
+
+                                ⚠️ ध्यान देने योग्य समस्याएँ
+
+                            {% else %}
+
+                                ⚠️ Common Problems
+
+                            {% endif %}
+
+                        </h2>
+
+
+                        <div class="common-problems-list">
+
+
+                            {% for problem in selected_technique.common_problems %}
+
+                                <div>
+
+                                    ✓ {{ problem }}
+
+                                </div>
+
+                            {% endfor %}
+
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endif %}
+
+
+            </section>
+
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+// ==========================================
+// GLOBAL AUDIO
+// ==========================================
+
+let plantingAudio = null;
+
+let voicePlaying = false;
+
+let voiceLoading = false;
+
+let currentAudioUrl = null;
+
+
+// ==========================================
+// AUTO SCROLL TO GUIDE
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        const guide =
+            document.getElementById(
+                "plantingGuide"
+            );
+
+
+        const selectedCrop =
+            "{{ selected_crop }}".trim();
+
+
+        if (
+            guide
+            && selectedCrop !== ""
+        ) {
+
+            setTimeout(
+                function() {
+
+                    guide.scrollIntoView({
+
+                        behavior: "smooth",
+
+                        block: "start"
+
+                    });
+
+                },
+
+                300
+            );
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// LANGUAGE CHANGE
+// ==========================================
+
+const languageSelect =
+    document.getElementById(
+        "guideLanguage"
+    );
+
+
+if (languageSelect) {
+
+    languageSelect.addEventListener(
+        "change",
+        function() {
+
+            stopPlantingVoice();
+
+
+            const cropInput =
+                document.getElementById(
+                    "cropSearch"
+                );
+
+
+            const crop =
+                cropInput
+                ? cropInput.value.trim()
+                : "";
+
+
+            if (crop !== "") {
+
+                document
+                    .getElementById(
+                        "plantSearchForm"
+                    )
+                    .submit();
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// VOICE SEARCH
+// ==========================================
+
+function startCropVoiceSearch() {
+
+    const SpeechRecognition =
+        window.SpeechRecognition
+        || window.webkitSpeechRecognition;
+
+
+    if (!SpeechRecognition) {
+
+        alert(
+            "Voice search is not supported in this browser."
+        );
+
+        return;
+    }
+
+
+    const recognition =
+        new SpeechRecognition();
+
+
+    const selectedLanguage =
+        document.getElementById(
+            "guideLanguage"
+        ).value;
+
+
+    const languageMap = {
+
+        "en": "en-IN",
+
+        "mr": "mr-IN",
+
+        "hi": "hi-IN"
+
+    };
+
+
+    recognition.lang =
+        languageMap[
+            selectedLanguage
+        ] || "en-IN";
+
+
+    recognition.interimResults = false;
+
+    recognition.maxAlternatives = 1;
+
+
+    recognition.onresult =
+        function(event) {
+
+            const spokenPlant =
+                event
+                    .results[0][0]
+                    .transcript;
+
+
+            document.getElementById(
+                "cropSearch"
+            ).value =
+                spokenPlant;
+
+
+            document.getElementById(
+                "plantSearchForm"
+            ).submit();
+
+        };
+
+
+    recognition.onerror =
+        function() {
+
+            alert(
+                "Could not recognize the plant name."
+            );
+
+        };
+
+
+    recognition.start();
+
+}
+
+
+// ==========================================
+// BUTTON RESET
+// ==========================================
+
+function resetVoiceButton() {
+
+    const button =
+        document.getElementById(
+            "guideSpeakButton"
+        );
+
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    button.disabled = false;
+
+
+    button.innerHTML = `
+
+        <i class="fa-solid fa-volume-high"></i>
+
+        Listen Guide
+
+    `;
+
+}
+
+
+// ==========================================
+// LOADING BUTTON
+// ==========================================
+
+function showVoiceLoading() {
+
+    const button =
+        document.getElementById(
+            "guideSpeakButton"
+        );
+
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    button.innerHTML = `
+
+        <i class="fa-solid fa-spinner fa-spin"></i>
+
+        Preparing Voice...
+
+    `;
+
+}
+
+
+// ==========================================
+// STOP BUTTON
+// ==========================================
+
+function showVoiceStopButton() {
+
+    const button =
+        document.getElementById(
+            "guideSpeakButton"
+        );
+
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    button.innerHTML = `
+
+        <i class="fa-solid fa-stop"></i>
+
+        Stop Voice
+
+    `;
+
+}
+
+
+// ==========================================
+// CLEAN TEXT
+// ==========================================
+
+function cleanVoiceText(text) {
+
+    if (!text) {
+
+        return "";
+
+    }
+
+
+    return text
+
+        // Remove emojis
+        .replace(
+            /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu,
+            ""
+        )
+
+        // Remove unnecessary symbols
+        .replace(
+            /[✓⚠★☆→←•]/g,
+            ""
+        )
+
+        // Remove repeated spaces
+        .replace(
+            /\s+/g,
+            " "
+        )
+
+        .trim();
+
+}
+
+
+// ==========================================
+// LANGUAGE LABELS
+// ==========================================
+
+function getVoiceLabels(language) {
+
+    const labels = {
+
+        en: {
+
+            intro:
+                "Complete planting guide for",
+
+            season:
+                "Season",
+
+            climate:
+                "Climate",
+
+            soil:
+                "Soil",
+
+            soil_ph:
+                "Soil p H",
+
+            spacing:
+                "Spacing",
+
+            planting_depth:
+                "Planting depth",
+
+            sunlight:
+                "Sunlight requirement",
+
+            watering:
+                "Watering",
+
+            fertilizer:
+                "Fertilizer and compost",
+
+            care:
+                "Crop care",
+
+            duration:
+                "Growing duration",
+
+            harvest:
+                "Harvest",
+
+            steps:
+                "Now the step by step planting process.",
+
+            step:
+                "Step",
+
+            problems:
+                "Common problems."
+
+        },
+
+
+        mr: {
+
+            intro:
+                "संपूर्ण लागवड मार्गदर्शक.",
+
+            season:
+                "योग्य हंगाम",
+
+            climate:
+                "योग्य हवामान",
+
+            soil:
+                "योग्य माती",
+
+            soil_ph:
+                "मातीचा पी एच",
+
+            spacing:
+                "लागवडीचे अंतर",
+
+            planting_depth:
+                "लागवडीची खोली",
+
+            sunlight:
+                "सूर्यप्रकाशाची गरज",
+
+            watering:
+                "पाणी व्यवस्थापन",
+
+            fertilizer:
+                "खत आणि कंपोस्ट व्यवस्थापन",
+
+            care:
+                "पिकाची काळजी",
+
+            duration:
+                "पिकाचा कालावधी",
+
+            harvest:
+                "काढणी",
+
+            steps:
+                "आता लागवडीची टप्प्याटप्प्याने प्रक्रिया ऐका.",
+
+            step:
+                "पायरी",
+
+            problems:
+                "लक्ष ठेवण्यासारख्या सामान्य समस्या."
+
+        },
+
+
+        hi: {
+
+            intro:
+                "संपूर्ण रोपण मार्गदर्शिका।",
+
+            season:
+                "उपयुक्त मौसम",
+
+            climate:
+                "उपयुक्त जलवायु",
+
+            soil:
+                "उपयुक्त मिट्टी",
+
+            soil_ph:
+                "मिट्टी का पी एच",
+
+            spacing:
+                "पौधों की दूरी",
+
+            planting_depth:
+                "रोपण की गहराई",
+
+            sunlight:
+                "धूप की आवश्यकता",
+
+            watering:
+                "सिंचाई",
+
+            fertilizer:
+                "खाद और कम्पोस्ट",
+
+            care:
+                "फसल की देखभाल",
+
+            duration:
+                "फसल की अवधि",
+
+            harvest:
+                "कटाई",
+
+            steps:
+                "अब चरण दर चरण रोपण प्रक्रिया सुनिए।",
+
+            step:
+                "चरण",
+
+            problems:
+                "ध्यान देने योग्य सामान्य समस्याएँ।"
+
+        }
+
+    };
+
+
+    return (
+        labels[language]
+        || labels.en
+    );
+
+}
+
+
+// ==========================================
+// BUILD CLEAN SPEECH TEXT
+// ==========================================
+
+function buildPlantingVoiceText() {
+
+    const guide =
+        document.getElementById(
+            "plantingGuide"
+        );
+
+
+    if (!guide) {
+
+        return "";
+
+    }
+
+
+    const language =
+        document.getElementById(
+            "guideLanguage"
+        ).value;
+
+
+    const labels =
+        getVoiceLabels(
+            language
+        );
+
+
+    const parts = [];
+
+
+    // ======================================
+    // PLANT NAME
+    // ======================================
+
+    const plantName =
+        guide.querySelector(
+            ".planting-guide-top h2"
+        );
+
+
+    if (plantName) {
+
+        parts.push(
+
+            labels.intro
+            + " "
+            + cleanVoiceText(
+                plantName.innerText
+            )
+            + "."
+
+        );
+
+    }
+
+
+    // ======================================
+    // INFORMATION CARDS
+    // ======================================
+
+    const infoCards =
+        guide.querySelectorAll(
+            ".planting-info-card"
+        );
+
+
+    infoCards.forEach(
+        function(card) {
+
+            const key =
+                card.dataset.key;
+
+
+            const valueElement =
+                card.querySelector(
+                    "p"
+                );
+
+
+            if (
+                !key
+                || !valueElement
+            ) {
+
+                return;
+
+            }
+
+
+            const value =
+                cleanVoiceText(
+                    valueElement.innerText
+                );
+
+
+            if (
+                value === ""
+                || value === "—"
+            ) {
+
+                return;
+
+            }
+
+
+            const label =
+                labels[key]
+                || "";
+
+
+            if (label) {
+
+                parts.push(
+
+                    label
+                    + ". "
+                    + value
+                    + "."
+
+                );
+
+            }
+
+        }
+    );
+
+
+    // ======================================
+    // STEP INTRO
+    // ======================================
+
+    const steps =
+        guide.querySelectorAll(
+            ".planting-step-card"
+        );
+
+
+    if (steps.length > 0) {
+
+        parts.push(
+            labels.steps
+        );
+
+    }
+
+
+    // ======================================
+    // STEPS
+    // ======================================
+
+    steps.forEach(
+        function(step, index) {
+
+            const title =
+                step.querySelector(
+                    "h3"
+                );
+
+
+            const description =
+                step.querySelector(
+                    "p"
+                );
+
+
+            if (
+                !title
+                || !description
+            ) {
+
+                return;
+
+            }
+
+
+            parts.push(
+
+                labels.step
+                + " "
+                + (index + 1)
+                + ". "
+                + cleanVoiceText(
+                    title.innerText
+                )
+                + ". "
+                + cleanVoiceText(
+                    description.innerText
+                )
+                + "."
+
+            );
+
+        }
+    );
+
+
+    // ======================================
+    // COMMON PROBLEMS
+    // ======================================
+
+    const problems =
+        guide.querySelectorAll(
+            ".common-problems-list div"
+        );
+
+
+    if (problems.length > 0) {
+
+        parts.push(
+            labels.problems
+        );
+
+    }
+
+
+    problems.forEach(
+        function(problem) {
+
+            const problemText =
+                cleanVoiceText(
+                    problem.innerText
+                );
+
+
+            if (problemText) {
+
+                parts.push(
+                    problemText
+                    + "."
+                );
+
+            }
+
+        }
+    );
+
+
+    return parts.join(
+        " "
+    );
+
+}
+
+
+// ==========================================
+// STOP VOICE
+// ==========================================
+
+function stopPlantingVoice() {
+
+    if (plantingAudio) {
+
+        plantingAudio.pause();
+
+        plantingAudio.currentTime = 0;
+
+        plantingAudio = null;
+
+    }
+
+
+    if (currentAudioUrl) {
+
+        URL.revokeObjectURL(
+            currentAudioUrl
+        );
+
+        currentAudioUrl = null;
+
+    }
+
+
+    voicePlaying = false;
+
+    voiceLoading = false;
+
+
+    resetVoiceButton();
+
+}
+
+
+// ==========================================
+// LISTEN / STOP VOICE
+// ==========================================
+
+async function togglePlantingVoice() {
+
+    // ======================================
+    // STOP CURRENT AUDIO
+    // ======================================
+
+    if (
+        voicePlaying
+        || voiceLoading
+    ) {
+
+        stopPlantingVoice();
+
+        return;
+
+    }
+
+
+    const text =
+        buildPlantingVoiceText();
+
+
+    if (!text) {
+
+        alert(
+            "No guide text available."
+        );
+
+        return;
+
+    }
+
+
+    const language =
+        document.getElementById(
+            "guideLanguage"
+        ).value;
+
+
+    voiceLoading = true;
+
+
+    showVoiceLoading();
+
+
+    try {
+
+        // ==================================
+        // REQUEST MP3 FROM FLASK
+        // ==================================
+
+        const response =
+            await fetch(
+
+                "{{ url_for('planting_guide_voice') }}",
+
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        text: text,
+
+                        language: language
+
+                    })
+
+                }
+
+            );
+
+
+        if (!response.ok) {
+
+            let message =
+                "Could not generate voice.";
+
+
+            try {
+
+                const errorData =
+                    await response.json();
+
+
+                if (errorData.message) {
+
+                    message =
+                        errorData.message;
+
+                }
+
+            }
+
+            catch (error) {
+
+                // Ignore JSON parse error
+
+            }
+
+
+            throw new Error(
+                message
+            );
+
+        }
+
+
+        // ==================================
+        // RECEIVE MP3
+        // ==================================
+
+        const audioBlob =
+            await response.blob();
+
+
+        currentAudioUrl =
+            URL.createObjectURL(
+                audioBlob
+            );
+
+
+        plantingAudio =
+            new Audio(
+                currentAudioUrl
+            );
+
+
+        // ==================================
+        // AUDIO START
+        // ==================================
+
+        plantingAudio.onplay =
+            function() {
+
+                voiceLoading = false;
+
+                voicePlaying = true;
+
+                showVoiceStopButton();
+
+            };
+
+
+        // ==================================
+        // AUDIO FINISHED
+        // ==================================
+
+        plantingAudio.onended =
+            function() {
+
+                stopPlantingVoice();
+
+            };
+
+
+        // ==================================
+        // AUDIO ERROR
+        // ==================================
+
+        plantingAudio.onerror =
+            function() {
+
+                stopPlantingVoice();
+
+                alert(
+                    "Could not play the generated voice."
+                );
+
+            };
+
+
+        await plantingAudio.play();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "VOICE ERROR:",
+            error
+        );
+
+
+        stopPlantingVoice();
+
+
+        alert(
+            error.message
+            || "Could not generate voice."
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// STOP WHEN LEAVING PAGE
+// ==========================================
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        stopPlantingVoice();
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>

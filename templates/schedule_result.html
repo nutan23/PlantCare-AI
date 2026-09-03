@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Crop Schedule - PlantCare</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+
+<div class="crop-form-page">
+
+    <div class="crop-form-card">
+
+        <div class="crop-form-heading">
+
+            <span>
+                ✅ Schedule Generated
+            </span>
+
+            <h1>
+                {{ schedule.crop_name }} Crop Schedule
+            </h1>
+
+            <p>
+                Your personalized crop-care schedule
+                has been generated successfully.
+            </p>
+
+        </div>
+
+
+        <div class="schedule-result-grid">
+
+
+            <div class="schedule-result-card">
+
+                <span>💧</span>
+
+                <h3>Next Watering</h3>
+
+                <p>
+                    {{ schedule.next_watering_date }}
+                </p>
+
+            </div>
+
+
+            <div class="schedule-result-card">
+
+                <span>🌿</span>
+
+                <h3>Next Compost</h3>
+
+                <p>
+                    {{ schedule.next_compost_date }}
+                </p>
+
+            </div>
+
+
+            <div class="schedule-result-card">
+
+                <span>🧪</span>
+
+                <h3>Next Fertilizer</h3>
+
+                <p>
+                    {{ schedule.next_fertilizer_date }}
+                </p>
+
+            </div>
+
+
+            <div class="schedule-result-card">
+
+                <span>🔍</span>
+
+                <h3>Next Inspection</h3>
+
+                <p>
+                    {{ schedule.next_inspection_date }}
+                </p>
+
+            </div>
+
+
+            <div class="schedule-result-card">
+
+                <span>🌾</span>
+
+                <h3>Expected Harvest</h3>
+
+                <p>
+                    {{ schedule.expected_harvest_date }}
+                </p>
+
+            </div>
+
+
+            <div class="schedule-result-card">
+
+                <span>🔔</span>
+
+                <h3>Email Reminder</h3>
+
+                <p>
+
+                    {% if schedule.notify_me %}
+
+                        Enabled ✅
+
+                    {% else %}
+
+                        Disabled
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="crop-form-actions">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="crop-cancel-btn">
+
+                ← Dashboard
+
+            </a>
+
+
+            <a href="{{ url_for('crop_scheduler') }}"
+               class="crop-save-btn"
+               style="text-decoration:none;">
+
+                📅 Create Another Schedule
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>
