@@ -25,7 +25,7 @@ from crop_rules import get_crop_rule
 from plant_ai import generate_planting_guide
 from farmer_chat import get_farmer_ai_response
 import os
-
+import requests
 import json
 import base64
 import io
@@ -544,6 +544,146 @@ class ChatHistory(db.Model):
         nullable=False
     )
 
+    # ==========================================
+# BREVO EMAIL API HELPER
+# ==========================================
+
+def send_brevo_email(
+    to_email,
+    subject,
+    message_text,
+    to_name=""
+):
+
+    api_key = os.getenv(
+        "BREVO_API_KEY"
+    )
+
+    sender_email = os.getenv(
+        "BREVO_SENDER_EMAIL"
+    )
+
+    sender_name = os.getenv(
+        "BREVO_SENDER_NAME",
+        "PlantCare"
+    )
+
+
+    if not api_key:
+
+        print(
+            "BREVO ERROR: BREVO_API_KEY missing"
+        )
+
+        return False
+
+
+    if not sender_email:
+
+        print(
+            "BREVO ERROR: BREVO_SENDER_EMAIL missing"
+        )
+
+        return False
+
+
+    url = (
+        "https://api.brevo.com/v3/smtp/email"
+    )
+
+
+    headers = {
+
+        "accept":
+            "application/json",
+
+        "api-key":
+            api_key,
+
+        "content-type":
+            "application/json"
+    }
+
+
+    recipient = {
+        "email": to_email
+    }
+
+
+    if to_name:
+
+        recipient["name"] = to_name
+
+
+    payload = {
+
+        "sender": {
+
+            "name":
+                sender_name,
+
+            "email":
+                sender_email
+        },
+
+        "to": [
+            recipient
+        ],
+
+        "subject":
+            subject,
+
+        "textContent":
+            message_text
+    }
+
+
+    try:
+
+        response = requests.post(
+
+            url,
+
+            headers=headers,
+
+            json=payload,
+
+            timeout=20
+        )
+
+
+        if response.status_code in (
+            200,
+            201,
+            202
+        ):
+
+            print(
+                "✅ Brevo email sent:",
+                to_email
+            )
+
+            return True
+
+
+        print(
+            "BREVO EMAIL ERROR:",
+            response.status_code,
+            response.text
+        )
+
+        return False
+
+
+    except Exception as error:
+
+        print(
+            "BREVO REQUEST ERROR:",
+            error
+        )
+
+        return False
+
 # ==========================================
 # DATE PARSER HELPER
 # ==========================================
@@ -636,7 +776,7 @@ def ensure_schedule_activities(schedule):
 
 
 # ==========================================
-# SCHEDULE CONFIRMATION EMAIL
+# SCHEDULE CONFIRMATION EMAIL - BREVO
 # ==========================================
 
 def send_schedule_confirmation_email(
@@ -645,28 +785,14 @@ def send_schedule_confirmation_email(
 ):
 
     if not user or not user.email:
-        return
 
-    message = Message(
+        return False
 
-        subject=(
-            "Welcome to AgreTech - "
-            "Crop Schedule Activated"
-        ),
 
-        sender=app.config[
-            "MAIL_USERNAME"
-        ],
-
-        recipients=[
-            user.email
-        ]
-    )
-
-    message.body = f"""
+    email_body = f"""
 Hello {user.name},
 
-Welcome to AgreTech 🌱
+Welcome to PlantCare 🌱
 
 Your crop schedule has been created successfully.
 
@@ -695,59 +821,85 @@ Your upcoming crop-care schedule:
 Email reminders are ENABLED.
 
 Important:
+
 A task will remain pending or overdue
 until you mark it as completed in PlantCare.
 
 After you mark an activity as completed,
-PlantCare will automatically calculate
+PlantCare automatically calculates
 its next due date.
 
 Regards,
-AgreTech Team 🌿
+PlantCare Team 🌿
 """
 
-    mail.send(
-        message
+
+    return send_brevo_email(
+
+        to_email=user.email,
+
+        to_name=user.name,
+
+        subject=(
+            "PlantCare - Crop Schedule Activated"
+        ),
+
+        message_text=email_body
     )
 
-
 # ==========================================
-# DAILY CROP REMINDERS
+# DAILY CROP REMINDERS - BREVO
 # ==========================================
 
 def send_due_crop_reminders():
 
     today = datetime.now().date()
 
+
     schedules = CropSchedule.query.filter_by(
+
         status="Active",
+
         notify_me=True
+
     ).all()
 
 
     for schedule in schedules:
 
+
         user = db.session.get(
+
             User,
+
             schedule.user_id
         )
 
+
         if not user or not user.email:
+
             continue
 
 
-        # Make sure older schedules also
-        # get activity records
+        # ======================================
+        # ENSURE ACTIVITIES EXIST
+        # ======================================
+
         ensure_schedule_activities(
             schedule
         )
 
+
+        # ======================================
+        # GET DUE / OVERDUE ACTIVITIES
+        # ======================================
 
         pending_activities = (
 
             CropActivity.query
 
             .filter(
+
                 CropActivity.schedule_id
                 == schedule.id,
 
@@ -770,25 +922,34 @@ def send_due_crop_reminders():
 
 
         if not pending_activities:
+
             continue
 
+
+        # ======================================
+        # CREATE TASK LIST
+        # ======================================
 
         task_lines = []
 
 
         for activity in pending_activities:
 
+
             if activity.due_date < today:
 
                 task_lines.append(
+
                     f"⚠ OVERDUE - "
                     f"{activity.activity_type} "
                     f"(Due: {activity.due_date})"
                 )
 
+
             else:
 
                 task_lines.append(
+
                     f"✅ DUE TODAY - "
                     f"{activity.activity_type} "
                     f"(Due: {activity.due_date})"
@@ -800,27 +961,14 @@ def send_due_crop_reminders():
         )
 
 
-        message = Message(
+        # ======================================
+        # EMAIL BODY
+        # ======================================
 
-            subject=(
-                f"AgreTech Reminder - "
-                f"{schedule.crop_name}"
-            ),
-
-            sender=app.config[
-                "MAIL_USERNAME"
-            ],
-
-            recipients=[
-                user.email
-            ]
-        )
-
-
-        message.body = f"""
+        email_body = f"""
 Hello {user.name},
 
-AgreTech Daily Crop Reminder 🌱
+PlantCare Daily Crop Reminder 🌱
 
 Crop:
 {schedule.crop_name}
@@ -841,15 +989,30 @@ The next activity date will be calculated
 from the actual completion date.
 
 Regards,
-AgreTech Team 🌿
+PlantCare Team 🌿
 """
 
 
-        try:
+        # ======================================
+        # SEND USING BREVO
+        # ======================================
 
-            mail.send(
-                message
-            )
+        email_sent = send_brevo_email(
+
+            to_email=user.email,
+
+            to_name=user.name,
+
+            subject=(
+                f"PlantCare Reminder - "
+                f"{schedule.crop_name}"
+            ),
+
+            message_text=email_body
+        )
+
+
+        if email_sent:
 
             print(
                 "✅ Crop reminder sent:",
@@ -858,11 +1021,12 @@ AgreTech Team 🌿
             )
 
 
-        except Exception as error:
+        else:
 
             print(
-                "REMINDER MAIL ERROR:",
-                error
+                "❌ Crop reminder failed:",
+                user.email,
+                schedule.crop_name
             )
 
 
@@ -3386,7 +3550,7 @@ def logout():
 
 
 # ==========================================
-# FORGOT PASSWORD
+# FORGOT PASSWORD - BREVO
 # ==========================================
 
 @app.route(
@@ -3395,13 +3559,22 @@ def logout():
 )
 def forgot_password():
 
+
     if request.method == "POST":
 
+
         email = request.form.get(
+
             "email",
+
             ""
+
         ).strip().lower()
 
+
+        # ======================================
+        # EMAIL REQUIRED
+        # ======================================
 
         if not email:
 
@@ -3449,7 +3622,7 @@ def forgot_password():
 
 
         # ======================================
-        # CREATE RESET LINK
+        # CREATE DEPLOYED RESET LINK
         # ======================================
 
         reset_link = url_for(
@@ -3463,24 +3636,10 @@ def forgot_password():
 
 
         # ======================================
-        # CREATE EMAIL
+        # EMAIL BODY
         # ======================================
 
-        message = Message(
-
-            subject="PlantCare Password Reset",
-
-            sender=app.config[
-                "MAIL_USERNAME"
-            ],
-
-            recipients=[
-                user.email
-            ]
-        )
-
-
-        message.body = f"""
+        email_body = f"""
 Hello {user.name},
 
 We received a request to reset your PlantCare password.
@@ -3500,15 +3659,22 @@ PlantCare Team 🌱
 
 
         # ======================================
-        # SEND EMAIL
+        # SEND THROUGH BREVO
         # ======================================
 
-        try:
+        email_sent = send_brevo_email(
 
-            mail.send(
-                message
-            )
+            to_email=user.email,
 
+            to_name=user.name,
+
+            subject="PlantCare Password Reset",
+
+            message_text=email_body
+        )
+
+
+        if email_sent:
 
             flash(
                 "Password reset link has been sent to your email.",
@@ -3516,16 +3682,10 @@ PlantCare Team 🌱
             )
 
 
-        except Exception as error:
-
-            print(
-                "MAIL ERROR:",
-                error
-            )
-
+        else:
 
             flash(
-                "Could not send reset email. Please check mail settings.",
+                "Could not send reset email. Please try again.",
                 "error"
             )
 

@@ -11,4 +11,4 @@ APScheduler
 gTTS
 groq
 gunicorn
-onnxruntime
+requests
