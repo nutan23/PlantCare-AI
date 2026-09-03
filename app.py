@@ -30,7 +30,7 @@ import json
 import base64
 import io
 import numpy as np
-import tensorflow as tf
+import onnxruntime as ort
 from disease_info import DISEASE_INFO, DEFAULT_INFO
 
 from PIL import Image
@@ -137,7 +137,7 @@ BASE_DIR = os.path.dirname(
 MODEL_PATH = os.path.join(
     BASE_DIR,
     "model",
-    "realworld_best_model.keras"
+    "realworld_best_model.onnx"
 )
 
 CLASS_NAMES_PATH = os.path.join(
@@ -146,10 +146,17 @@ CLASS_NAMES_PATH = os.path.join(
     "class_names.json"
 )
 
-print("🌿 Loading Plant Disease AI Model...")
+print("🌿 Loading Plant Disease ONNX Model...")
 
-plant_model = tf.keras.models.load_model(
-    MODEL_PATH
+plant_model = ort.InferenceSession(
+    MODEL_PATH,
+    providers=["CPUExecutionProvider"]
+)
+
+model_input_name = (
+    plant_model
+    .get_inputs()[0]
+    .name
 )
 
 with open(
@@ -1057,10 +1064,12 @@ def predict():
         # MODEL PREDICTION
         # ======================================
 
-        predictions = plant_model.predict(
-            image_array,
-            verbose=0
-        )
+        predictions = plant_model.run(
+            None,
+            {
+                 model_input_name: image_array
+            }
+        )[0]
 
 
         predicted_index = int(
